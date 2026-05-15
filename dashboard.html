@@ -595,6 +595,101 @@ header {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ========== Trend Charts ========== */
+.trend-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.trend-grid.full { grid-template-columns: 1fr; }
+@media (max-width: 700px) {
+  .trend-grid { grid-template-columns: 1fr; }
+}
+
+.chart-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 16px 18px;
+}
+.chart-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.chart-legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400;
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.trend-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+}
+.trend-chart .grid {
+  stroke: var(--border);
+  stroke-width: 0.5;
+  stroke-dasharray: 2 3;
+  fill: none;
+}
+.trend-chart .y-label {
+  font-size: 9px;
+  fill: var(--ink-faint);
+  text-anchor: end;
+}
+.trend-chart .x-label {
+  font-size: 10px;
+  fill: var(--ink-soft);
+  text-anchor: middle;
+}
+.trend-chart .bar-label {
+  font-size: 10px;
+  fill: var(--ink);
+  text-anchor: middle;
+  font-weight: 500;
+}
+.trend-chart .line {
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.trend-chart .dot {
+  cursor: pointer;
+  transition: r 0.15s;
+}
+.trend-chart .dot:hover { r: 5.5; }
+.trend-chart .bar {
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.trend-chart .bar:hover { opacity: 0.75; }
+
 footer {
   text-align: center;
   margin-top: 40px;
@@ -742,10 +837,13 @@ function render(d) {
   // ===== 02 歷史背景資料 =====
   if (h) html.push(renderHistorical(h));
 
-  // ===== 03 病人清單 =====
+  // ===== 03 年度趨勢分析 =====
+  if (h && h.years && h.years.length >= 2) html.push(renderTrends(h));
+
+  // ===== 04 病人清單 =====
   html.push(`
     <h2 class="section-title">
-      <span class="num">03</span>
+      <span class="num">04</span>
       <span>病人清單（本系統）</span>
     </h2>
     <div class="tabs" id="tabBar">
@@ -760,11 +858,11 @@ function render(d) {
     </div>
   `);
 
-  // ===== 04 ERAS 原始數值 =====
+  // ===== 05 ERAS 原始數值 =====
   const rv = d.metrics.rawValues;
   html.push(`
     <h2 class="section-title">
-      <span class="num">04</span>
+      <span class="num">05</span>
       <span>ERAS 指標 · 原始數值（本系統平均）</span>
       <span class="sub">歷史對照見上方背景區塊</span>
     </h2>
@@ -779,7 +877,7 @@ function render(d) {
     </div>
   `);
 
-  // ===== 05 ERAS 指標率 =====
+  // ===== 06 ERAS 指標率 =====
   const rt = d.metrics.rates;
   let histOR = null, histEarly = null;
   if (h && h.overall) {
@@ -790,7 +888,7 @@ function render(d) {
   }
   html.push(`
     <h2 class="section-title">
-      <span class="num">05</span>
+      <span class="num">06</span>
       <span>ERAS 指標 · 指標率</span>
     </h2>
     <div class="rate-grid">
@@ -809,10 +907,10 @@ function render(d) {
     </div>
   `);
 
-  // ===== 06 病患滿意度 =====
+  // ===== 07 病患滿意度 =====
   html.push(`
     <h2 class="section-title">
-      <span class="num">06</span>
+      <span class="num">07</span>
       <span>病患滿意度</span>
     </h2>
     <div class="placeholder-card">
@@ -1003,6 +1101,228 @@ function comoCard(label, p) {
       <div class="pct-bar"><div class="fill" style="width:${p}%"></div></div>
     </div>
   `;
+}
+
+// ===== Trends section =====
+const CHART_COLORS = {
+  teal:  '#1F5A5A',
+  gold:  '#A87B4D',
+  plum:  '#6B5876',
+  navy:  '#2C4866',
+  red:   '#B85450',
+  green: '#4A7A5A',
+};
+
+function renderTrends(h) {
+  const years = h.years;
+  const xLabels = years;
+
+  // 提取各指標
+  const seriesData = {
+    volume:      years.map(y => h.byYear[y].totalPatients),
+    erasPct:     years.map(y => {
+      const d = h.byYear[y];
+      return d.totalPatients ? Math.round(d.pathway.eras / d.totalPatients * 1000) / 10 : null;
+    }),
+    losAvg:      years.map(y => h.byYear[y].metrics.hospitalLOSDays.avg),
+    icuAvg:      years.map(y => h.byYear[y].metrics.icuStayDays.avg),
+    intubAvg:    years.map(y => h.byYear[y].metrics.intubationDays.avg),
+    orExt:       years.map(y => h.byYear[y].rates.orExtubationPct),
+    earlyExt:    years.map(y => h.byYear[y].rates.earlyExtubationPct),
+    complications: years.map(y => h.byYear[y].outcomes.complications),
+    mortality:   years.map(y => h.byYear[y].outcomes.inHospitalMortality),
+    reintubation: years.map(y => h.byYear[y].outcomes.reintubation),
+  };
+
+  const legend = (items) => `<div class="chart-legend">${items.map(it =>
+    `<span class="legend-item"><span class="legend-dot" style="background:${it.color}"></span>${it.name}</span>`
+  ).join('')}</div>`;
+
+  return `
+    <h2 class="section-title">
+      <span class="num">03</span>
+      <span>年度趨勢分析</span>
+      <span class="sub">${years.length} 個年度 · ${years[0]} – ${years[years.length-1]}</span>
+    </h2>
+
+    <div class="trend-grid">
+      <div class="chart-card">
+        <div class="chart-title">服務量趨勢</div>
+        ${renderBarChart({ xLabels, values: seriesData.volume, color: CHART_COLORS.teal, yUnit: '位' })}
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">ERAS 採用率</div>
+        ${renderLineChart({
+          xLabels,
+          series: [{ name: 'ERAS %', color: CHART_COLORS.gold, values: seriesData.erasPct }],
+          yUnit: '%', yMin: 0, yMax: 100
+        })}
+      </div>
+    </div>
+
+    <div class="trend-grid full">
+      <div class="chart-card">
+        <div class="chart-title">
+          <span>平均恢復指標</span>
+          ${legend([
+            { name: '住院天數', color: CHART_COLORS.teal },
+            { name: 'ICU 天數', color: CHART_COLORS.plum },
+            { name: '術後插管天數', color: CHART_COLORS.gold },
+          ])}
+        </div>
+        ${renderLineChart({
+          xLabels,
+          series: [
+            { name: '住院天數', color: CHART_COLORS.teal, values: seriesData.losAvg },
+            { name: 'ICU 天數', color: CHART_COLORS.plum, values: seriesData.icuAvg },
+            { name: '術後插管天數', color: CHART_COLORS.gold, values: seriesData.intubAvg },
+          ],
+          yUnit: ' 天', yMin: 0
+        })}
+      </div>
+    </div>
+
+    <div class="trend-grid full">
+      <div class="chart-card">
+        <div class="chart-title">
+          <span>拔管時機比例</span>
+          ${legend([
+            { name: '手術室中拔管', color: CHART_COLORS.green },
+            { name: '立即拔管 (<6hr)', color: CHART_COLORS.navy },
+          ])}
+        </div>
+        ${renderLineChart({
+          xLabels,
+          series: [
+            { name: '手術室中', color: CHART_COLORS.green, values: seriesData.orExt },
+            { name: '立即拔管', color: CHART_COLORS.navy, values: seriesData.earlyExt },
+          ],
+          yUnit: '%', yMin: 0, yMax: 100
+        })}
+      </div>
+    </div>
+
+    <div class="trend-grid full">
+      <div class="chart-card">
+        <div class="chart-title">
+          <span>不良結果趨勢</span>
+          ${legend([
+            { name: '術後併發症', color: CHART_COLORS.gold },
+            { name: '住院死亡', color: CHART_COLORS.red },
+            { name: '重新插管', color: CHART_COLORS.plum },
+          ])}
+        </div>
+        ${renderLineChart({
+          xLabels,
+          series: [
+            { name: '併發症', color: CHART_COLORS.gold, values: seriesData.complications },
+            { name: '住院死亡', color: CHART_COLORS.red, values: seriesData.mortality },
+            { name: '重新插管', color: CHART_COLORS.plum, values: seriesData.reintubation },
+          ],
+          yUnit: '%', yMin: 0
+        })}
+      </div>
+    </div>
+  `;
+}
+
+// ===== SVG chart helpers =====
+function renderLineChart(opts) {
+  const W = 480, H = 200;
+  const pad = { top: 14, right: 14, bottom: 28, left: 36 };
+  const chartW = W - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+
+  let allY = [];
+  opts.series.forEach(s => s.values.forEach(v => {
+    if (v != null && !isNaN(v)) allY.push(v);
+  }));
+
+  let yMin = opts.yMin != null ? opts.yMin : (allY.length ? Math.min(...allY) : 0);
+  let yMax = opts.yMax != null ? opts.yMax : (allY.length ? Math.max(...allY) * 1.15 : 10);
+  if (yMax === yMin) yMax = yMin + 1;
+
+  const n = opts.xLabels.length;
+  const xPos = (i) => pad.left + (n === 1 ? chartW / 2 : (i / (n - 1)) * chartW);
+  const yPos = (v) => pad.top + chartH - ((v - yMin) / (yMax - yMin)) * chartH;
+
+  const fmtVal = (v) => v >= 10 ? Math.round(v) : (Math.round(v * 10) / 10);
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" class="trend-chart" preserveAspectRatio="xMidYMid meet">`;
+
+  // Grid lines + Y labels (5 horizontal grid lines)
+  for (let i = 0; i <= 4; i++) {
+    const yc = pad.top + (i / 4) * chartH;
+    const v = yMax - (i / 4) * (yMax - yMin);
+    svg += `<line x1="${pad.left}" y1="${yc}" x2="${W - pad.right}" y2="${yc}" class="grid"/>`;
+    svg += `<text x="${pad.left - 5}" y="${yc + 3}" class="y-label">${fmtVal(v)}</text>`;
+  }
+
+  // X axis labels
+  opts.xLabels.forEach((label, i) => {
+    svg += `<text x="${xPos(i)}" y="${H - pad.bottom + 16}" class="x-label">${label}</text>`;
+  });
+
+  // Series
+  opts.series.forEach((s) => {
+    const pts = s.values.map((v, i) => (v != null && !isNaN(v)) ? { x: xPos(i), y: yPos(v), val: v, label: opts.xLabels[i] } : null);
+
+    // Connected line through non-null points
+    const validPts = pts.filter(p => p);
+    if (validPts.length >= 2) {
+      const poly = validPts.map(p => `${p.x},${p.y}`).join(' ');
+      svg += `<polyline points="${poly}" fill="none" stroke="${s.color}" stroke-width="2" class="line"/>`;
+    }
+
+    // Dots
+    pts.forEach(p => {
+      if (!p) return;
+      svg += `<circle cx="${p.x}" cy="${p.y}" r="3.5" fill="${s.color}" class="dot"><title>${p.label}: ${fmtVal(p.val)}${opts.yUnit || ''}</title></circle>`;
+    });
+  });
+
+  svg += `</svg>`;
+  return svg;
+}
+
+function renderBarChart(opts) {
+  const W = 480, H = 200;
+  const pad = { top: 18, right: 14, bottom: 28, left: 36 };
+  const chartW = W - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+
+  const values = opts.values || [];
+  const n = values.length;
+  if (!n) return '<svg></svg>';
+
+  const yMax = Math.max(...values, 1) * 1.15;
+  const slot = chartW / n;
+  const barW = slot * 0.65;
+  const fmtVal = (v) => v >= 10 ? Math.round(v) : (Math.round(v * 10) / 10);
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" class="trend-chart" preserveAspectRatio="xMidYMid meet">`;
+
+  // Grid + Y labels
+  for (let i = 0; i <= 4; i++) {
+    const yc = pad.top + (i / 4) * chartH;
+    const v = yMax - (i / 4) * yMax;
+    svg += `<line x1="${pad.left}" y1="${yc}" x2="${W - pad.right}" y2="${yc}" class="grid"/>`;
+    svg += `<text x="${pad.left - 5}" y="${yc + 3}" class="y-label">${fmtVal(v)}</text>`;
+  }
+
+  // Bars
+  values.forEach((v, i) => {
+    const cx = pad.left + slot * i + slot / 2;
+    const x = cx - barW / 2;
+    const barH = (v / yMax) * chartH;
+    const y = pad.top + chartH - barH;
+    svg += `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" fill="${opts.color || '#1F5A5A'}" class="bar"><title>${opts.xLabels[i]}: ${v}${opts.yUnit || ''}</title></rect>`;
+    svg += `<text x="${cx}" y="${y - 4}" class="bar-label">${v}</text>`;
+    svg += `<text x="${cx}" y="${H - pad.bottom + 16}" class="x-label">${opts.xLabels[i]}</text>`;
+  });
+
+  svg += `</svg>`;
+  return svg;
 }
 
 function ovCard(accent, label, value, unit) {
