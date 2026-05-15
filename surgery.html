@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>手術預約輸入 — 醫師專用</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #FAF7F2;
+  --paper: #FFFFFF;
+  --ink: #1A1A1A;
+  --ink-soft: #5C5C5C;
+  --ink-faint: #8A8580;
+  --teal: #1F5A5A;
+  --teal-tint: #F5F9F9;
+  --teal-soft: #E6EDED;
+  --teal-hover: #2D6F6F;
+  --gold: #A87B4D;
+  --border: #E8E2D5;
+  --border-strong: #D4CDB8;
+  --error: #B85450;
+  --error-bg: #FBEFEE;
+  --success: #4A7A5A;
+  --success-bg: #EDF3EE;
+  --disabled: #F5F2EC;
+}
+
+body {
+  font-family: 'Noto Sans TC', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 20px 16px 60px;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 760px; margin: 0 auto; }
+
+/* ========== Header ========== */
+header {
+  margin: 16px 0 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.brand h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.brand .eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.role-tag {
+  background: var(--teal);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+/* ========== Step Indicator ========== */
+.steps {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: var(--ink-faint);
+  font-family: 'Noto Serif TC', serif;
+}
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.step-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--border);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+.step-item.active .step-num { background: var(--teal); }
+.step-item.done .step-num { background: var(--success); }
+.step-item.active { color: var(--ink); }
+.step-arrow { color: var(--ink-faint); }
+
+/* ========== Section ========== */
+.section {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 28px;
+  margin-bottom: 18px;
+}
+@media (max-width: 480px) {
+  .section { padding: 22px 20px; }
+}
+.section.disabled {
+  background: var(--disabled);
+  pointer-events: none;
+  opacity: 0.55;
+}
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+.section-num {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+.section-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 19px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.section-action {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--teal);
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  font-family: inherit;
+}
+.section-action:hover { color: var(--teal-hover); }
+
+/* ========== Doctor Key Bar ========== */
+.key-bar {
+  background: var(--teal-tint);
+  border: 1px solid var(--teal-soft);
+  border-radius: 3px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.key-bar label {
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 500;
+  margin: 0;
+}
+.key-bar input {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+}
+
+/* ========== Fields ========== */
+.field { margin-bottom: 20px; }
+.field:last-child { margin-bottom: 0; }
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 7px;
+}
+.req { color: var(--error); margin-left: 2px; }
+.hint {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+
+input[type="text"], input[type="tel"], input[type="number"],
+input[type="date"], textarea, select {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 15px;
+  background: var(--paper);
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-height: 42px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(31, 90, 90, 0.12);
+}
+textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
+
+select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1.5L6 6.5L11 1.5' stroke='%235C5C5C' stroke-width='1.5' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+input[type="number"] { font-family: 'JetBrains Mono', monospace; }
+
+.row { display: grid; gap: 14px; }
+.row.row-2 { grid-template-columns: 1fr 1fr; }
+.row.row-3 { grid-template-columns: 1fr 1fr 1fr; }
+.row.row-mix { grid-template-columns: 2fr 1fr; }
+@media (max-width: 600px) {
+  .row.row-2, .row.row-3, .row.row-mix { grid-template-columns: 1fr; }
+}
+
+/* ========== Radio (pill style) ========== */
+.radio-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 8px;
+}
+.option { position: relative; }
+.option input { position: absolute; opacity: 0; pointer-events: none; }
+.option label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  font-size: 14px;
+  margin: 0;
+  cursor: pointer;
+  min-height: 42px;
+  transition: all 0.15s ease;
+  background: var(--paper);
+  font-weight: 500;
+}
+.option label:hover { border-color: var(--teal); }
+.option input:checked + label {
+  border-color: var(--teal);
+  background: var(--teal);
+  color: white;
+}
+
+/* ========== Patient Card ========== */
+.patient-card {
+  background: var(--teal-tint);
+  border: 1px solid var(--teal-soft);
+  border-left: 3px solid var(--teal);
+  border-radius: 3px;
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+.patient-card .item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.patient-card .item-label {
+  font-size: 11px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+.patient-card .item-value {
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.patient-card .item-value.mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+}
+.patient-card .item-value.warn {
+  color: var(--gold);
+  font-size: 13px;
+}
+
+/* ========== Buttons ========== */
+.btn {
+  padding: 11px 24px;
+  border: none;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.03em;
+  min-height: 42px;
+}
+.btn-primary {
+  background: var(--teal);
+  color: white;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--teal-hover);
+  box-shadow: 0 4px 12px rgba(31, 90, 90, 0.18);
+}
+.btn-secondary {
+  background: var(--paper);
+  color: var(--teal);
+  border: 1px solid var(--border-strong);
+}
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--teal);
+  background: var(--teal-tint);
+}
+.btn:disabled {
+  background: var(--ink-faint);
+  cursor: not-allowed;
+}
+.btn-block {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ========== Submit Area ========== */
+.submit-area {
+  margin-top: 24px;
+  text-align: center;
+}
+.submit-note {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+/* ========== Validation & Status ========== */
+.error-msg {
+  color: var(--error);
+  font-size: 12px;
+  margin-top: 5px;
+  display: none;
+  font-weight: 500;
+}
+.field.has-error input,
+.field.has-error select,
+.field.has-error textarea {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
+.field.has-error .error-msg { display: block; }
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 3px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  display: none;
+}
+.alert.show { display: block; }
+.alert-error {
+  background: var(--error-bg);
+  color: var(--error);
+  border-left: 3px solid var(--error);
+}
+.alert-success {
+  background: var(--success-bg);
+  color: var(--success);
+  border-left: 3px solid var(--success);
+}
+
+/* ========== Success Screen ========== */
+.success-screen {
+  display: none;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 56px 32px;
+  text-align: center;
+}
+.success-screen.show { display: block; }
+.success-icon {
+  width: 64px; height: 64px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  background: var(--success);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 34px;
+  font-weight: 300;
+}
+.success-screen h2 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 24px;
+  margin-bottom: 14px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.success-summary {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 18px;
+  max-width: 420px;
+  margin: 22px auto;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.9;
+}
+.success-summary .row-pair { display: flex; gap: 12px; }
+.success-summary .row-pair span:first-child {
+  color: var(--ink-faint);
+  min-width: 80px;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+.success-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+/* ========== Loading ========== */
+.loading {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: -2px;
+  margin-right: 6px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+footer {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="brand">
+      <div>
+        <div class="eyebrow">Surgery Booking</div>
+        <h1>手術預約輸入</h1>
+      </div>
+    </div>
+    <span class="role-tag">醫師專用</span>
+  </header>
+
+  <!-- Doctor key bar -->
+  <div class="key-bar" id="keyBar">
+    <label for="doctor_key">通行碼</label>
+    <input type="password" id="doctor_key" placeholder="輸入醫師通行碼" autocomplete="off">
+    <div class="hint" style="width:100%;margin:0;color:var(--ink-faint)">
+      首次進入或重新整理頁面時需輸入。此通行碼會隨每筆查詢和儲存一併送出。
+    </div>
+  </div>
+
+  <div class="steps" id="steps">
+    <div class="step-item active" id="step1Indicator">
+      <div class="step-num">1</div><span>查詢病人</span>
+    </div>
+    <span class="step-arrow">→</span>
+    <div class="step-item" id="step2Indicator">
+      <div class="step-num">2</div><span>輸入手術資訊</span>
+    </div>
+    <span class="step-arrow">→</span>
+    <div class="step-item" id="step3Indicator">
+      <div class="step-num">3</div><span>完成</span>
+    </div>
+  </div>
+
+  <div id="mainForm">
+
+    <!-- ============ Step 1: Lookup Patient ============ -->
+    <section class="section" id="lookupSection">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <span class="section-title">查詢病人</span>
+      </div>
+
+      <div class="alert alert-error" id="lookupAlert"></div>
+
+      <div class="row row-2">
+        <div class="field">
+          <label for="lookup_birthdate">出生年月日 <span class="req">*</span></label>
+          <input type="date" id="lookup_birthdate">
+          <div class="error-msg">請選擇出生年月日</div>
+        </div>
+        <div class="field">
+          <label for="lookup_id4">身分證末 4 碼 <span class="req">*</span></label>
+          <input type="text" id="lookup_id4" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off">
+          <div class="error-msg">請填寫 4 位數字</div>
+        </div>
+      </div>
+
+      <div style="margin-top:8px">
+        <button type="button" class="btn btn-primary" id="lookupBtn">查詢病人</button>
+      </div>
+    </section>
+
+    <!-- ============ Step 2: Surgery Form ============ -->
+    <section class="section disabled" id="surgerySection">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <span class="section-title">手術預約資訊</span>
+        <button type="button" class="section-action" id="changePatientBtn" style="display:none">換一位病人</button>
+      </div>
+
+      <!-- Patient confirmation card -->
+      <div class="patient-card" id="patientCard" style="display:none;margin-bottom:24px">
+        <div class="item">
+          <span class="item-label">姓名</span>
+          <span class="item-value" id="pc_name">—</span>
+        </div>
+        <div class="item">
+          <span class="item-label">性別 / 年齡</span>
+          <span class="item-value" id="pc_gender_age">—</span>
+        </div>
+        <div class="item">
+          <span class="item-label">病人主鍵</span>
+          <span class="item-value mono" id="pc_pk">—</span>
+        </div>
+        <div class="item">
+          <span class="item-label">聯絡電話</span>
+          <span class="item-value mono" id="pc_phone">—</span>
+        </div>
+        <div class="item" id="pc_existing_box" style="display:none;grid-column:1/-1">
+          <span class="item-label">目前狀態</span>
+          <span class="item-value warn" id="pc_existing">—</span>
+        </div>
+      </div>
+
+      <form id="surgeryForm">
+        <div class="alert alert-error" id="surgeryAlert"></div>
+
+        <div class="field">
+          <label for="diagnosis">術前診斷 <span class="req">*</span></label>
+          <textarea id="diagnosis" name="diagnosis" required placeholder="例：三條冠狀動脈狹窄、左主幹病變"></textarea>
+          <div class="error-msg">請填寫術前診斷</div>
+        </div>
+
+        <div class="row row-mix">
+          <div class="field" data-name="surgery_type">
+            <label>術式 <span class="req">*</span></label>
+            <div class="radio-group">
+              <div class="option">
+                <input type="radio" id="s1" name="surgery_type" value="CABG" required>
+                <label for="s1">CABG</label>
+              </div>
+              <div class="option">
+                <input type="radio" id="s2" name="surgery_type" value="EVAR">
+                <label for="s2">EVAR</label>
+              </div>
+              <div class="option">
+                <input type="radio" id="s3" name="surgery_type" value="TEVAR">
+                <label for="s3">TEVAR</label>
+              </div>
+              <div class="option">
+                <input type="radio" id="s4" name="surgery_type" value="其他">
+                <label for="s4">其他</label>
+              </div>
+            </div>
+            <div class="error-msg">請選擇術式</div>
+          </div>
+
+          <div class="field">
+            <label for="scheduled_date">預定手術日 <span class="req">*</span></label>
+            <input type="date" id="scheduled_date" name="scheduled_date" required>
+            <div class="error-msg">請選擇預定手術日</div>
+          </div>
+        </div>
+
+        <div class="field" id="surgeryOtherField" style="display:none">
+          <label for="surgery_other">術式補述 <span class="req">*</span></label>
+          <input type="text" id="surgery_other" name="surgery_other" placeholder="例：OPCAB、MVR、AVR">
+          <div class="error-msg">術式選「其他」時必填</div>
+        </div>
+
+        <div class="row row-3">
+          <div class="field">
+            <label for="egfr">術前 eGFR</label>
+            <input type="number" id="egfr" name="egfr" step="0.1" min="0" max="200" placeholder="ml/min/1.73m²">
+            <div class="hint">mL/min/1.73m²</div>
+          </div>
+          <div class="field">
+            <label for="lvef">術前 LVEF</label>
+            <input type="number" id="lvef" name="lvef" step="1" min="0" max="100" placeholder="百分比">
+            <div class="hint">%</div>
+          </div>
+          <div class="field">
+            <label for="surgery_code">手術代碼</label>
+            <input type="text" id="surgery_code" name="surgery_code" placeholder="ICD-10-PCS / 健保碼">
+          </div>
+        </div>
+
+        <div class="submit-area">
+          <button type="submit" class="btn btn-primary btn-block" id="submitBtn">儲存預約</button>
+          <p class="submit-note">送出後將更新病人主檔的手術相關欄位，並設定手術狀態為「排定中」</p>
+        </div>
+      </form>
+    </section>
+
+  </div>
+
+  <!-- ============ Success Screen ============ -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✓</div>
+    <h2>預約已儲存</h2>
+    <p style="color:var(--ink-soft)">病人主檔已更新</p>
+
+    <div class="success-summary" id="successSummary"></div>
+
+    <div class="success-actions">
+      <button type="button" class="btn btn-secondary" id="addAnotherBtn">為另一位病人預約</button>
+      <button type="button" class="btn btn-primary" id="finishBtn">結束</button>
+    </div>
+  </div>
+
+  <footer>
+    手術病人管理系統 · 醫師端 v1.0
+  </footer>
+</div>
+
+<script>
+// ============================================================
+// ⚠️ 部署前請替換為您的 Google Apps Script Web App URL
+// （與病人表單共用同一個 URL）
+// ============================================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzr5eDnHyyq2hWZJ1pD4x5z7h8LkabeZMNDcl6o1lWx0e3bE4CLDCkmqYCzPA1qagU2ug/exec';
+
+// ===== DOM refs =====
+const $ = (id) => document.getElementById(id);
+const lookupBtn = $('lookupBtn');
+const surgerySection = $('surgerySection');
+const surgeryForm = $('surgeryForm');
+const patientCard = $('patientCard');
+const lookupAlert = $('lookupAlert');
+const surgeryAlert = $('surgeryAlert');
+const submitBtn = $('submitBtn');
+const successScreen = $('successScreen');
+const mainForm = $('mainForm');
+const changePatientBtn = $('changePatientBtn');
+
+let currentPatient = null;
+
+// ===== Doctor key persist in URL hash (so refresh doesn't lose it) =====
+// 從 URL hash 載入通行碼（避免重新整理就要重打）
+if (window.location.hash.startsWith('#k=')) {
+  $('doctor_key').value = decodeURIComponent(window.location.hash.slice(3));
+}
+$('doctor_key').addEventListener('change', () => {
+  const v = $('doctor_key').value;
+  if (v) {
+    history.replaceState(null, '', '#k=' + encodeURIComponent(v));
+  }
+});
+
+// ===== Surgery type 「其他」 toggle =====
+document.querySelectorAll('input[name="surgery_type"]').forEach(r => {
+  r.addEventListener('change', () => {
+    $('surgeryOtherField').style.display = (r.value === '其他' && r.checked) ? 'block' : 'none';
+  });
+});
+
+// ===== Clear errors on input =====
+[surgeryForm, $('lookupSection')].forEach(container => {
+  container.addEventListener('input', (e) => {
+    const f = e.target.closest('.field');
+    if (f && f.classList.contains('has-error')) f.classList.remove('has-error');
+  });
+  container.addEventListener('change', (e) => {
+    const f = e.target.closest('.field');
+    if (f && f.classList.contains('has-error')) f.classList.remove('has-error');
+  });
+});
+
+// ===== JSONP helper (workaround Apps Script CORS limitation for GET) =====
+function jsonp(url, params, timeoutMs = 15000) {
+  return new Promise((resolve, reject) => {
+    const cb = '_jsonp_cb_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+    const usp = new URLSearchParams({ ...params, callback: cb });
+    const script = document.createElement('script');
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error('查詢逾時，請檢查網路或 Apps Script 部署狀態'));
+    }, timeoutMs);
+    function cleanup() {
+      delete window[cb];
+      script.remove();
+      clearTimeout(timer);
+    }
+    window[cb] = (data) => { cleanup(); resolve(data); };
+    script.onerror = () => { cleanup(); reject(new Error('網路錯誤或 URL 不正確')); };
+    script.src = url + '?' + usp.toString();
+    document.body.appendChild(script);
+  });
+}
+
+// ===== Lookup =====
+lookupBtn.addEventListener('click', async () => {
+  lookupAlert.classList.remove('show');
+  $('lookup_birthdate').closest('.field').classList.remove('has-error');
+  $('lookup_id4').closest('.field').classList.remove('has-error');
+
+  const key = $('doctor_key').value.trim();
+  const birthdate = $('lookup_birthdate').value;
+  const id4 = $('lookup_id4').value.trim();
+
+  // Validate
+  let valid = true;
+  if (!key) { lookupAlert.textContent = '請輸入醫師通行碼'; lookupAlert.classList.add('show'); return; }
+  if (!birthdate) { $('lookup_birthdate').closest('.field').classList.add('has-error'); valid = false; }
+  if (!/^[0-9]{4}$/.test(id4)) { $('lookup_id4').closest('.field').classList.add('has-error'); valid = false; }
+  if (!valid) return;
+
+  // Build PK
+  const pk = birthdate.replace(/-/g, '') + '-' + id4;
+
+  lookupBtn.disabled = true;
+  lookupBtn.innerHTML = '<span class="loading"></span>查詢中…';
+
+  try {
+    const res = await jsonp(APPS_SCRIPT_URL, { action: 'lookup', pk: pk, key: key });
+
+    if (res.error === 'unauthorized') {
+      lookupAlert.textContent = '通行碼錯誤，請確認後重試';
+      lookupAlert.classList.add('show');
+    } else if (!res.found) {
+      lookupAlert.textContent = '找不到符合的病人。請確認出生年月日與身分證末4碼，或先請病人填寫術前資料表單。';
+      lookupAlert.classList.add('show');
+    } else {
+      currentPatient = res;
+      showPatient(res);
+    }
+  } catch (err) {
+    lookupAlert.textContent = '查詢失敗：' + err.message;
+    lookupAlert.classList.add('show');
+  } finally {
+    lookupBtn.disabled = false;
+    lookupBtn.textContent = '查詢病人';
+  }
+});
+
+function showPatient(p) {
+  $('pc_name').textContent = p.name || '—';
+  $('pc_gender_age').textContent = `${p.gender || '—'} / ${p.age != null ? p.age + ' 歲' : '—'}`;
+  $('pc_pk').textContent = p.pk || '—';
+  $('pc_phone').textContent = p.phone || '—';
+
+  // Show existing surgery info if any
+  if (p.currentSurgeryStatus || p.currentScheduledDate) {
+    $('pc_existing').textContent =
+      `目前 ${p.currentSurgeryStatus || ''}` +
+      (p.currentScheduledDate ? ` · 預定 ${p.currentScheduledDate}` : '') +
+      (p.currentSurgery ? ` · ${p.currentSurgery}` : '');
+    $('pc_existing_box').style.display = 'flex';
+  } else {
+    $('pc_existing_box').style.display = 'none';
+  }
+
+  patientCard.style.display = 'grid';
+  surgerySection.classList.remove('disabled');
+  changePatientBtn.style.display = 'inline-block';
+
+  // Update step indicator
+  $('step1Indicator').classList.remove('active');
+  $('step1Indicator').classList.add('done');
+  $('step2Indicator').classList.add('active');
+
+  // Scroll to surgery section
+  surgerySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => $('diagnosis').focus(), 400);
+}
+
+// ===== Change patient =====
+changePatientBtn.addEventListener('click', () => {
+  currentPatient = null;
+  patientCard.style.display = 'none';
+  surgerySection.classList.add('disabled');
+  changePatientBtn.style.display = 'none';
+  surgeryForm.reset();
+  $('surgeryOtherField').style.display = 'none';
+  $('lookup_birthdate').value = '';
+  $('lookup_id4').value = '';
+  $('step1Indicator').classList.add('active');
+  $('step1Indicator').classList.remove('done');
+  $('step2Indicator').classList.remove('active');
+  $('lookupSection').scrollIntoView({ behavior: 'smooth' });
+  setTimeout(() => $('lookup_birthdate').focus(), 400);
+});
+
+// ===== Submit surgery info =====
+surgeryForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  surgeryAlert.classList.remove('show');
+  document.querySelectorAll('#surgeryForm .field.has-error').forEach(f => f.classList.remove('has-error'));
+
+  if (!currentPatient) {
+    surgeryAlert.textContent = '請先查詢病人';
+    surgeryAlert.classList.add('show');
+    return;
+  }
+
+  // Validate
+  let valid = true;
+  let firstErr = null;
+  const required = ['diagnosis', 'scheduled_date'];
+  required.forEach(n => {
+    const el = surgeryForm.querySelector(`[name="${n}"]`);
+    if (!el.value.trim()) {
+      const fld = el.closest('.field');
+      fld.classList.add('has-error');
+      valid = false;
+      if (!firstErr) firstErr = fld;
+    }
+  });
+  // Surgery type radio
+  const stChecked = surgeryForm.querySelector('input[name="surgery_type"]:checked');
+  if (!stChecked) {
+    const fld = surgeryForm.querySelector('[data-name="surgery_type"]');
+    fld.classList.add('has-error');
+    valid = false;
+    if (!firstErr) firstErr = fld;
+  } else if (stChecked.value === '其他') {
+    const other = $('surgery_other').value.trim();
+    if (!other) {
+      $('surgery_other').closest('.field').classList.add('has-error');
+      valid = false;
+      if (!firstErr) firstErr = $('surgery_other').closest('.field');
+    }
+  }
+
+  if (!valid) {
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Send
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="loading"></span>儲存中…';
+
+  const formData = new FormData(surgeryForm);
+  formData.append('action', 'updateSurgery');
+  formData.append('pk', currentPatient.pk);
+  formData.append('key', $('doctor_key').value.trim());
+
+  try {
+    // Use no-cors mode for POST (Apps Script CORS limitation)
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData,
+    });
+
+    // Build summary
+    const surgeryName = stChecked.value === '其他' ? $('surgery_other').value.trim() : stChecked.value;
+    const summary = `
+      <div class="row-pair"><span>病人</span><span>${currentPatient.name} (${currentPatient.pk})</span></div>
+      <div class="row-pair"><span>術前診斷</span><span>${$('diagnosis').value.trim()}</span></div>
+      <div class="row-pair"><span>預定手術日</span><span>${$('scheduled_date').value}</span></div>
+      <div class="row-pair"><span>術式</span><span>${surgeryName}</span></div>
+      ${$('egfr').value ? `<div class="row-pair"><span>術前 eGFR</span><span>${$('egfr').value}</span></div>` : ''}
+      ${$('lvef').value ? `<div class="row-pair"><span>術前 LVEF</span><span>${$('lvef').value}%</span></div>` : ''}
+      ${$('surgery_code').value ? `<div class="row-pair"><span>手術代碼</span><span>${$('surgery_code').value}</span></div>` : ''}
+    `;
+    $('successSummary').innerHTML = summary;
+
+    mainForm.style.display = 'none';
+    successScreen.classList.add('show');
+    $('step2Indicator').classList.remove('active');
+    $('step2Indicator').classList.add('done');
+    $('step3Indicator').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch (err) {
+    surgeryAlert.textContent = '儲存失敗：' + err.message;
+    surgeryAlert.classList.add('show');
+    submitBtn.disabled = false;
+    submitBtn.textContent = '儲存預約';
+  }
+});
+
+// ===== Success actions =====
+$('addAnotherBtn').addEventListener('click', () => {
+  // Reset everything except doctor key
+  currentPatient = null;
+  surgeryForm.reset();
+  $('surgeryOtherField').style.display = 'none';
+  $('lookup_birthdate').value = '';
+  $('lookup_id4').value = '';
+  patientCard.style.display = 'none';
+  surgerySection.classList.add('disabled');
+  changePatientBtn.style.display = 'none';
+  successScreen.classList.remove('show');
+  mainForm.style.display = 'block';
+  submitBtn.disabled = false;
+  submitBtn.textContent = '儲存預約';
+  $('step1Indicator').classList.add('active');
+  $('step1Indicator').classList.remove('done');
+  $('step2Indicator').classList.remove('active', 'done');
+  $('step3Indicator').classList.remove('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => $('lookup_birthdate').focus(), 300);
+});
+
+$('finishBtn').addEventListener('click', () => {
+  window.close();
+  // Fallback if window.close fails (when not opened by script)
+  setTimeout(() => {
+    document.body.innerHTML = '<div style="text-align:center;padding:80px 20px;font-family:sans-serif;color:#5C5C5C">您可關閉此頁面</div>';
+  }, 200);
+});
+
+// Auto-focus first field on load
+window.addEventListener('load', () => {
+  if ($('doctor_key').value) {
+    $('lookup_birthdate').focus();
+  } else {
+    $('doctor_key').focus();
+  }
+});
+</script>
+</body>
+</html>
