@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>儀表板 — 手術病人管理系統</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #FAF7F2;
+  --paper: #FFFFFF;
+  --ink: #1A1A1A;
+  --ink-soft: #5C5C5C;
+  --ink-faint: #8A8580;
+  --teal: #1F5A5A;
+  --teal-tint: #F5F9F9;
+  --teal-soft: #E6EDED;
+  --gold: #A87B4D;
+  --plum: #6B5876;
+  --plum-tint: #F2EFF4;
+  --navy: #2C4866;
+  --navy-tint: #EEF2F7;
+  --border: #E8E2D5;
+  --border-strong: #D4CDB8;
+  --success: #4A7A5A;
+  --success-bg: #EDF3EE;
+  --warn: #B8842D;
+  --warn-bg: #FBF3DE;
+  --error: #B85450;
+  --error-bg: #FBEFEE;
+}
+
+body {
+  font-family: 'Noto Sans TC', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 20px 16px 60px;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1080px; margin: 0 auto; }
+
+/* ========== Header ========== */
+header {
+  margin: 16px 0 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand .eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.brand h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.role-tag {
+  background: var(--navy);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+.as-of {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-top: 4px;
+}
+
+/* ========== Key Bar ========== */
+.key-bar {
+  background: var(--navy-tint);
+  border: 1px solid #DCE3EB;
+  border-radius: 3px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.key-bar label { font-size: 13px; color: var(--navy); font-weight: 500; }
+.key-bar input {
+  flex: 1;
+  min-width: 180px;
+  padding: 7px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  background: white;
+}
+.key-bar input:focus {
+  outline: none;
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(44, 72, 102, 0.12);
+}
+.btn-refresh {
+  padding: 7px 14px;
+  background: var(--paper);
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-family: inherit;
+}
+.btn-refresh:hover { border-color: var(--navy); color: var(--navy); }
+
+/* ========== Section title ========== */
+.section-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 17px;
+  color: var(--ink);
+  font-weight: 600;
+  margin: 30px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.section-title .num {
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+.section-title .sub {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400;
+  margin-left: auto;
+}
+
+/* ========== Overview cards ========== */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+@media (max-width: 760px) { .overview-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 400px) { .overview-grid { grid-template-columns: 1fr; } }
+
+.ov-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 3px;
+  padding: 16px 18px;
+}
+.ov-card[data-accent="teal"]  { --accent: var(--teal); }
+.ov-card[data-accent="gold"]  { --accent: var(--gold); }
+.ov-card[data-accent="plum"]  { --accent: var(--plum); }
+.ov-card[data-accent="navy"]  { --accent: var(--navy); }
+.ov-label {
+  font-size: 12px;
+  color: var(--ink-faint);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.ov-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.ov-value.placeholder { color: var(--ink-faint); font-size: 24px; }
+.ov-unit {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-left: 4px;
+}
+
+/* ========== Tabs ========== */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--border);
+}
+.tab {
+  padding: 9px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ink-soft);
+  font-weight: 500;
+  margin-bottom: -1px;
+  transition: all 0.15s;
+}
+.tab:hover { color: var(--ink); }
+.tab.active {
+  background: var(--paper);
+  border-color: var(--border);
+  color: var(--navy);
+  font-weight: 600;
+}
+.tab .count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-left: 4px;
+}
+.tab.active .count { color: var(--navy); }
+
+.tab-content {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 3px 3px;
+  min-height: 100px;
+}
+
+/* ========== Patient list ========== */
+.plist {
+  list-style: none;
+}
+.plist-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1.2fr 0.8fr;
+  gap: 12px;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  align-items: center;
+}
+.plist-row:last-child { border-bottom: none; }
+.plist-row:hover { background: var(--cream); }
+.plist-row.header {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border-strong);
+}
+.plist-row .name { font-weight: 500; }
+.plist-row .meta { color: var(--ink-soft); font-size: 13px; }
+.plist-row .date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--ink);
+}
+.plist-row .surgery { color: var(--gold); font-weight: 500; font-size: 13px; }
+.plist-empty {
+  padding: 28px;
+  text-align: center;
+  color: var(--ink-faint);
+  font-style: italic;
+  font-size: 13px;
+}
+.status-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.status-pill.scheduled { background: var(--warn-bg); color: var(--warn); }
+.status-pill.completed { background: var(--success-bg); color: var(--success); }
+.status-pill.cancelled { background: #F0EEEA; color: var(--ink-faint); }
+.status-pill.reschedule { background: var(--plum-tint); color: var(--plum); }
+@media (max-width: 600px) {
+  .plist-row { grid-template-columns: 1fr; gap: 4px; padding: 12px 16px; }
+  .plist-row.header { display: none; }
+}
+
+/* ========== Metric stat cards ========== */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+@media (max-width: 760px) { .metric-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .metric-grid { grid-template-columns: 1fr; } }
+
+.mc {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.mc-label {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+.mc-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.mc-value.muted { color: var(--ink-faint); font-size: 16px; font-weight: 500; }
+.mc-value .unit { font-size: 13px; color: var(--ink-faint); font-weight: 400; }
+.mc-meta {
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+.mc.pending { background: #FAF7EE; border-style: dashed; }
+.mc.pending .mc-meta { color: var(--warn); font-style: italic; }
+
+/* Rates */
+.rate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (max-width: 600px) { .rate-grid { grid-template-columns: 1fr; } }
+.rate-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--plum);
+  border-radius: 3px;
+  padding: 18px 20px;
+}
+.rate-label {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.rate-def {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-bottom: 12px;
+  font-style: italic;
+}
+.rate-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--plum);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.rate-value .unit { font-size: 14px; font-weight: 400; color: var(--ink-soft); }
+.rate-frac {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+.rate-value.muted { color: var(--ink-faint); font-size: 18px; }
+
+/* Satisfaction placeholder */
+.placeholder-card {
+  background: var(--paper);
+  border: 1px dashed var(--border-strong);
+  border-radius: 3px;
+  padding: 28px 24px;
+  text-align: center;
+}
+.placeholder-card .ph-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 16px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.placeholder-card .ph-desc {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+/* Alerts / loading */
+.alert {
+  padding: 12px 16px;
+  border-radius: 3px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  display: none;
+}
+.alert.show { display: block; }
+.alert-error { background: var(--error-bg); color: var(--error); border-left: 3px solid var(--error); }
+.alert-info { background: var(--navy-tint); color: var(--navy); border-left: 3px solid var(--navy); }
+
+.loading-block {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 14px;
+}
+.loading {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: -2px;
+  margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+footer {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="brand">
+      <div class="eyebrow">Dashboard</div>
+      <h1>儀表板</h1>
+      <div class="as-of" id="asOf"></div>
+    </div>
+    <span class="role-tag">管理</span>
+  </header>
+
+  <div class="key-bar">
+    <label for="doctor_key">通行碼</label>
+    <input type="password" id="doctor_key" placeholder="輸入後載入資料" autocomplete="off">
+    <button type="button" class="btn-refresh" id="refreshBtn">↻ 重新載入</button>
+  </div>
+
+  <div class="alert alert-error" id="errAlert"></div>
+
+  <div id="content">
+    <div class="loading-block"><span class="loading"></span> 載入中…</div>
+  </div>
+
+  <footer>手術病人管理系統 · 儀表板 v1.0</footer>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzr5eDnHyyq2hWZJ1pD4x5z7h8LkabeZMNDcl6o1lWx0e3bE4CLDCkmqYCzPA1qagU2ug/exec';
+
+const $ = (id) => document.getElementById(id);
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[c]);
+}
+
+// ===== Key persistence =====
+if (window.location.hash.startsWith('#k=')) {
+  $('doctor_key').value = decodeURIComponent(window.location.hash.slice(3));
+}
+$('doctor_key').addEventListener('change', () => {
+  const v = $('doctor_key').value;
+  if (v) {
+    history.replaceState(null, '', '#k=' + encodeURIComponent(v));
+    load();
+  }
+});
+
+// ===== JSONP =====
+function jsonp(url, params, timeoutMs = 20000) {
+  return new Promise((resolve, reject) => {
+    const cb = '_dash_cb_' + Date.now() + '_' + Math.floor(Math.random()*1e6);
+    const usp = new URLSearchParams({ ...params, callback: cb });
+    const script = document.createElement('script');
+    const timer = setTimeout(() => { cleanup(); reject(new Error('查詢逾時')); }, timeoutMs);
+    function cleanup() { delete window[cb]; script.remove(); clearTimeout(timer); }
+    window[cb] = (data) => { cleanup(); resolve(data); };
+    script.onerror = () => { cleanup(); reject(new Error('網路錯誤')); };
+    script.src = url + '?' + usp.toString();
+    document.body.appendChild(script);
+  });
+}
+
+// ===== Load =====
+async function load() {
+  const key = $('doctor_key').value.trim();
+  $('errAlert').classList.remove('show');
+
+  if (!key) {
+    $('content').innerHTML = '<div class="loading-block">請先輸入通行碼以載入資料</div>';
+    return;
+  }
+
+  $('content').innerHTML = '<div class="loading-block"><span class="loading"></span> 載入中…</div>';
+
+  try {
+    const res = await jsonp(APPS_SCRIPT_URL, { action: 'dashboard', key });
+    if (res.error === 'unauthorized') {
+      showError('通行碼錯誤');
+      $('content').innerHTML = '';
+      return;
+    }
+    if (res.error) {
+      showError('載入失敗：' + res.error);
+      $('content').innerHTML = '';
+      return;
+    }
+    render(res);
+  } catch (err) {
+    showError('載入失敗：' + err.message);
+    $('content').innerHTML = '';
+  }
+}
+
+function showError(msg) {
+  const el = $('errAlert');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+$('refreshBtn').addEventListener('click', load);
+
+// ===== Render =====
+function render(d) {
+  $('asOf').textContent = d.asOf ? '資料時間：' + d.asOf : '';
+
+  const html = [];
+
+  // ===== 01 總覽 =====
+  html.push(`
+    <h2 class="section-title">
+      <span class="num">01</span>
+      <span>總覽</span>
+    </h2>
+    <div class="overview-grid">
+      ${ovCard('teal', '累積服務量', d.overview.totalServiceVolume, '位')}
+      ${ovCard('gold', '待開刀', d.overview.pending, '位')}
+      ${ovCard('plum', '進行中', d.overview.inProgress, '位')}
+      ${ovCard('navy', '本月已完成', d.overview.completedThisMonth, '位')}
+    </div>
+  `);
+
+  // ===== 02 病人清單 =====
+  html.push(`
+    <h2 class="section-title">
+      <span class="num">02</span>
+      <span>病人清單</span>
+    </h2>
+    <div class="tabs" id="tabBar">
+      <button type="button" class="tab active" data-tab="pending">待開刀 <span class="count">${d.lists.pending.length}</span></button>
+      <button type="button" class="tab" data-tab="inProgress">進行中 <span class="count">${d.lists.inProgress.length}</span></button>
+      <button type="button" class="tab" data-tab="closed">已結案 <span class="count">${d.lists.closed.length}</span></button>
+    </div>
+    <div class="tab-content">
+      <div id="tab-pending" class="tab-panel">${renderList(d.lists.pending, 'pending')}</div>
+      <div id="tab-inProgress" class="tab-panel" style="display:none">${renderList(d.lists.inProgress, 'inProgress')}</div>
+      <div id="tab-closed" class="tab-panel" style="display:none">${renderList(d.lists.closed, 'closed')}</div>
+    </div>
+  `);
+
+  // ===== 03 ERAS 原始數值 =====
+  const rv = d.metrics.rawValues;
+  html.push(`
+    <h2 class="section-title">
+      <span class="num">03</span>
+      <span>ERAS 指標 · 原始數值（平均）</span>
+    </h2>
+    <div class="metric-grid">
+      ${metricCard('術後脫離呼吸器時間', rv.extubation)}
+      ${metricCard('術後首次 Try Water 時間', rv.tryWater)}
+      ${metricCard('術後首次固體食物進食時間', rv.foodIntake)}
+      ${metricCard('術後首次下床走路', rv.ambulation)}
+      ${metricCard('術後胸管全拔時間', rv.chestTube)}
+      ${metricCard('平均 ICU 滯留時間', rv.icuStay)}
+      ${metricCard('平均住院天數', rv.hospitalLOS)}
+    </div>
+  `);
+
+  // ===== 04 ERAS 指標率 =====
+  const rt = d.metrics.rates;
+  html.push(`
+    <h2 class="section-title">
+      <span class="num">04</span>
+      <span>ERAS 指標 · 指標率</span>
+    </h2>
+    <div class="rate-grid">
+      ${rateCard(
+        '手術室中拔管比例',
+        '拔管時間 &lt; 轉入加護病房時間',
+        rt.extubatedInOR
+      )}
+      ${rateCard(
+        '術後立即拔管比例',
+        '術後脫離呼吸器時間 &lt; 6 小時',
+        rt.earlyExtubation
+      )}
+    </div>
+  `);
+
+  // ===== 05 病患滿意度 =====
+  html.push(`
+    <h2 class="section-title">
+      <span class="num">05</span>
+      <span>病患滿意度</span>
+    </h2>
+    <div class="placeholder-card">
+      <div class="ph-title">敬請期待</div>
+      <div class="ph-desc">滿意度資料將從 Google Forms 問卷回填，預計後續啟用。</div>
+    </div>
+  `);
+
+  $('content').innerHTML = html.join('');
+
+  // Tab binding
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+      $('tab-' + btn.dataset.tab).style.display = 'block';
+    });
+  });
+}
+
+function ovCard(accent, label, value, unit) {
+  return `
+    <div class="ov-card" data-accent="${accent}">
+      <div class="ov-label">${label}</div>
+      <div class="ov-value">${value}<span class="ov-unit">${unit}</span></div>
+    </div>
+  `;
+}
+
+function metricCard(label, m) {
+  if (!m || m.pending) {
+    return `
+      <div class="mc pending">
+        <div class="mc-label">${label}</div>
+        <div class="mc-value muted">—</div>
+        <div class="mc-meta">${m && m.note ? escapeHtml(m.note) : '尚未啟用'}</div>
+      </div>
+    `;
+  }
+  if (m.avg == null) {
+    return `
+      <div class="mc">
+        <div class="mc-label">${label}</div>
+        <div class="mc-value muted">—</div>
+        <div class="mc-meta">尚無資料</div>
+      </div>
+    `;
+  }
+  return `
+    <div class="mc">
+      <div class="mc-label">${label}</div>
+      <div class="mc-value">${m.avg}<span class="unit">${escapeHtml(m.unit || '')}</span></div>
+      <div class="mc-meta">基於 ${m.count} 筆紀錄</div>
+    </div>
+  `;
+}
+
+function rateCard(label, defText, r) {
+  if (!r || r.pct == null) {
+    return `
+      <div class="rate-card">
+        <div class="rate-label">${label}</div>
+        <div class="rate-def">${defText}</div>
+        <div class="rate-value muted">尚無資料</div>
+      </div>
+    `;
+  }
+  return `
+    <div class="rate-card">
+      <div class="rate-label">${label}</div>
+      <div class="rate-def">${defText}</div>
+      <div class="rate-value">${r.pct}<span class="unit">%</span></div>
+      <div class="rate-frac">${r.count} / ${r.total} 位</div>
+    </div>
+  `;
+}
+
+function renderList(items, kind) {
+  if (!items || items.length === 0) {
+    let msg = '目前無資料';
+    if (kind === 'pending') msg = '目前沒有待開刀的病人';
+    else if (kind === 'inProgress') msg = '目前沒有進行中的病人';
+    else if (kind === 'closed') msg = '目前沒有已結案的病人';
+    return `<div class="plist-empty">${msg}</div>`;
+  }
+
+  const rows = [];
+  rows.push(`
+    <div class="plist-row header">
+      <div>姓名 / 性別年齡</div>
+      <div>${kind === 'pending' ? '預定手術日' : '實際手術日'}</div>
+      <div>術式</div>
+      <div>狀態</div>
+    </div>
+  `);
+  items.forEach(p => {
+    const dateShown = kind === 'pending' ? (p.scheduledDate || '—') : (p.actualDate || p.scheduledDate || '—');
+    rows.push(`
+      <div class="plist-row">
+        <div>
+          <span class="name">${escapeHtml(p.name)}</span>
+          <span class="meta"> · ${escapeHtml(p.gender || '')} ${p.age != null ? p.age + ' 歲' : ''}</span>
+        </div>
+        <div class="date">${dateShown}</div>
+        <div class="surgery">${escapeHtml(p.surgery || '—')}</div>
+        <div>${statusPill(p)}</div>
+      </div>
+    `);
+  });
+  return rows.join('');
+}
+
+function statusPill(p) {
+  if (p.status === '取消') return '<span class="status-pill cancelled">取消</span>';
+  if (p.status === '改期') return '<span class="status-pill reschedule">改期</span>';
+  if (p.status === '已完成') {
+    return p.closed
+      ? '<span class="status-pill cancelled">已結案</span>'
+      : '<span class="status-pill completed">已完成</span>';
+  }
+  if (p.status === '排定中') return '<span class="status-pill scheduled">排定中</span>';
+  return '<span class="status-pill cancelled">—</span>';
+}
+
+// ===== Init =====
+window.addEventListener('load', () => {
+  if ($('doctor_key').value) load();
+  else $('doctor_key').focus();
+});
+</script>
+</body>
+</html>
