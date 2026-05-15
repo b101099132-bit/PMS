@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心臟手術後醫療經驗問卷 PREMs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Reset & Variables ───────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:    #0d2b45;
+    --teal:    #1a6b72;
+    --teal-lt: #2a9ba5;
+    --gold:    #c8973a;
+    --bg:      #f5f7fa;
+    --white:   #ffffff;
+    --text:    #1e2a35;
+    --muted:   #6b7f8e;
+    --border:  #d8e2ec;
+    --danger:  #c0392b;
+    --success: #1e8449;
+    --warn-bg: #fef9e7;
+    --warn-br: #e6a817;
+    --radius:  12px;
+    --shadow:  0 4px 24px rgba(13,43,69,.10);
+    --shadow-lg: 0 12px 40px rgba(13,43,69,.16);
+    --font-body: 'Noto Sans TC', sans-serif;
+    --font-serif: 'Noto Serif TC', serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* ── Progress Bar ────────────────────────────── */
+  #progress-wrap {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--white);
+    box-shadow: 0 2px 12px rgba(13,43,69,.08);
+    padding: 12px 24px 10px;
+  }
+  #progress-label {
+    font-size: 12px; color: var(--muted); margin-bottom: 6px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  #progress-label strong { color: var(--navy); font-size: 13px; }
+  #progress-bar-track {
+    height: 6px; background: var(--border); border-radius: 99px; overflow: hidden;
+  }
+  #progress-bar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--teal), var(--teal-lt));
+    border-radius: 99px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+
+  /* ── Layout ──────────────────────────────────── */
+  #app { padding-top: 68px; }
+
+  .container {
+    max-width: 720px; margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* ── Header Card ─────────────────────────────── */
+  .header-card {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--teal) 100%);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    color: var(--white);
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header-card::before {
+    content: '♥';
+    position: absolute; right: 28px; top: 24px;
+    font-size: 72px; opacity: .08; line-height: 1;
+    font-family: serif;
+  }
+  .header-card .tag {
+    display: inline-block;
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 99px;
+    font-size: 11px; font-weight: 500; letter-spacing: .08em;
+    padding: 3px 12px; margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .header-card h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(20px, 4vw, 26px);
+    font-weight: 700; line-height: 1.3; margin-bottom: 8px;
+  }
+  .header-card .sub {
+    font-size: 13px; opacity: .75; margin-bottom: 0;
+  }
+
+  /* ── Notice Box ──────────────────────────────── */
+  .notice {
+    background: var(--warn-bg);
+    border: 1.5px solid var(--warn-br);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 14px; line-height: 1.8;
+  }
+  .notice strong { color: var(--gold); display: block; margin-bottom: 4px; }
+
+  /* ── Sections ────────────────────────────────── */
+  .section { display: none; animation: fadeUp .4s ease both; }
+  .section.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: 18px; color: var(--navy);
+    font-weight: 700; margin-bottom: 6px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--teal);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .num {
+    background: var(--teal); color: #fff;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+    font-family: var(--font-body);
+  }
+  .section-hint {
+    font-size: 13px; color: var(--muted);
+    margin-bottom: 20px; line-height: 1.7;
+  }
+
+  /* ── Question Card ───────────────────────────── */
+  .q-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    transition: box-shadow .2s;
+  }
+  .q-card:hover { box-shadow: var(--shadow-lg); }
+  .q-card.answered { border-left: 4px solid var(--teal); }
+  .q-card.error { border-left: 4px solid var(--danger); }
+
+  .q-label {
+    font-size: 15px; font-weight: 500; color: var(--navy);
+    margin-bottom: 4px; line-height: 1.5;
+  }
+  .q-hint {
+    font-size: 12px; color: var(--muted);
+    margin-bottom: 14px; line-height: 1.6;
+  }
+  .q-required { color: var(--danger); margin-left: 2px; }
+  .error-msg {
+    font-size: 12px; color: var(--danger);
+    margin-top: 8px; display: none;
+  }
+  .q-card.error .error-msg { display: block; }
+
+  /* ── Text / Select Inputs ────────────────────── */
+  .text-input, .select-input, .textarea-input {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--font-body);
+    font-size: 15px; color: var(--text);
+    background: var(--white);
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+  }
+  .text-input:focus, .select-input:focus, .textarea-input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(26,107,114,.12);
+  }
+  .textarea-input { resize: vertical; min-height: 90px; }
+
+  /* ── Radio / Checkbox ────────────────────────── */
+  .options-list { display: flex; flex-direction: column; gap: 8px; }
+  .option-item {
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer;
+    padding: 14px 16px;
+    min-height: 52px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    transition: background .15s, border-color .15s;
+    font-size: 15px; line-height: 1.5;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none; -webkit-user-select: none;
+  }
+  .option-item:active { background: #e0f0f2; }
+  .option-item:hover  { background: #f0f7f8; border-color: var(--teal-lt); }
+  /* 隱藏原生 radio/checkbox，改用自訂樣式 */
+  .option-item input[type="radio"],
+  .option-item input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none;
+    width: 22px; height: 22px; min-width: 22px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    background: var(--white);
+    transition: border-color .15s, background .15s;
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+  .option-item input[type="checkbox"] { border-radius: 5px; }
+  .option-item.selected input[type="radio"],
+  .option-item.selected input[type="checkbox"] {
+    border-color: var(--teal);
+    background: var(--teal);
+    box-shadow: inset 0 0 0 4px var(--white);
+  }
+  .option-item.selected {
+    background: #e8f4f5; border-color: var(--teal);
+    font-weight: 500;
+  }
+
+  /* ── Scale Rating ────────────────────────────── */
+  .scale-wrap { margin-top: 4px; }
+  .scale-labels {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .scale-buttons {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .scale-btn {
+    flex: 1; min-width: 36px;
+    padding: 10px 4px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 500;
+    color: var(--muted);
+    transition: all .15s;
+    text-align: center;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .scale-btn:hover { border-color: var(--teal-lt); color: var(--teal); background: #f0f7f8; }
+  .scale-btn.selected {
+    background: var(--teal); border-color: var(--teal);
+    color: #fff; transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26,107,114,.30);
+  }
+  .scale-btn.na-btn {
+    flex: none; min-width: auto; padding: 10px 12px;
+    font-size: 12px; color: var(--muted); border-style: dashed;
+  }
+  .scale-btn.na-btn.selected {
+    background: var(--muted); border-color: var(--muted);
+  }
+
+  /* ── Overall Satisfaction (1–10) ─────────────── */
+  .satisfaction-row {
+    display: flex; gap: 5px; flex-wrap: nowrap; justify-content: center;
+  }
+  .sat-btn {
+    flex: 1; padding: 12px 4px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px; background: var(--white);
+    cursor: pointer; font-family: var(--font-body);
+    font-size: 15px; font-weight: 700; color: var(--muted);
+    transition: all .15s; text-align: center;
+  }
+  .sat-btn:hover { transform: translateY(-3px); }
+  .sat-btn.s1,.sat-btn.s2  { --c: #c0392b; }
+  .sat-btn.s3,.sat-btn.s4  { --c: #e67e22; }
+  .sat-btn.s5,.sat-btn.s6  { --c: #f1c40f; }
+  .sat-btn.s7,.sat-btn.s8  { --c: #2ecc71; }
+  .sat-btn.s9,.sat-btn.s10 { --c: #1e8449; }
+  .sat-btn.selected {
+    background: var(--c); border-color: var(--c);
+    color: #fff; transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0,0,0,.2);
+  }
+  .sat-sub {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--muted);
+    margin-top: 8px; padding: 0 2px;
+  }
+
+  /* ── Navigation ──────────────────────────────── */
+  .nav-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 28px; gap: 12px;
+  }
+  .btn {
+    padding: 12px 28px; border-radius: 8px; border: none;
+    font-family: var(--font-body); font-size: 15px; font-weight: 500;
+    cursor: pointer; transition: all .2s; outline: none;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  }
+  .btn-prev {
+    background: var(--white); color: var(--muted);
+    border: 1.5px solid var(--border);
+  }
+  .btn-prev:hover { background: var(--bg); color: var(--navy); }
+  .btn-next {
+    background: linear-gradient(135deg, var(--navy), var(--teal));
+    color: #fff; flex: 1; max-width: 280px;
+    box-shadow: 0 4px 16px rgba(13,43,69,.25);
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(13,43,69,.30); }
+  .btn-submit {
+    background: linear-gradient(135deg, var(--success), var(--teal));
+    color: #fff; flex: 1; max-width: 280px;
+    box-shadow: 0 4px 16px rgba(26,132,73,.30);
+  }
+  .btn-submit:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0) scale(.98); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  /* ── Thank You Screen ────────────────────────── */
+  #thank-you {
+    display: none; text-align: center;
+    padding: 60px 20px;
+    animation: fadeUp .6s ease;
+  }
+  .ty-icon {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 0 auto 24px;
+    box-shadow: 0 8px 32px rgba(26,107,114,.30);
+  }
+  #thank-you h2 {
+    font-family: var(--font-serif); font-size: 24px;
+    color: var(--navy); margin-bottom: 12px;
+  }
+  #thank-you p { color: var(--muted); font-size: 15px; line-height: 1.8; }
+  .ty-divider {
+    width: 60px; height: 3px;
+    background: linear-gradient(90deg, var(--teal), var(--teal-lt));
+    border-radius: 99px; margin: 20px auto;
+  }
+
+  /* ── Spinner ─────────────────────────────────── */
+  .spinner {
+    display: inline-block; width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,.4);
+    border-top-color: #fff; border-radius: 50%;
+    animation: spin .7s linear infinite;
+    margin-right: 8px; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Footer ──────────────────────────────────── */
+  .form-footer {
+    font-size: 11px; color: var(--muted); text-align: center;
+    margin-top: 32px; line-height: 1.8;
+  }
+
+  /* ── Responsive ──────────────────────────────── */
+  @media (max-width: 480px) {
+    .container { padding: 20px 14px 80px; }
+    .header-card { padding: 24px 20px; }
+    .q-card { padding: 16px 16px; }
+    .scale-buttons { gap: 4px; }
+    .scale-btn { padding: 9px 2px; font-size: 13px; }
+    .sat-btn { font-size: 13px; padding: 10px 2px; }
+    .satisfaction-row { gap: 3px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Progress -->
+<div id="progress-wrap">
+  <div id="progress-label">
+    <span id="progress-text">第 1 步，共 6 步</span>
+    <strong id="progress-pct">0%</strong>
+  </div>
+  <div id="progress-bar-track">
+    <div id="progress-bar-fill"></div>
+  </div>
+</div>
+
+<div id="app">
+<div class="container">
+
+  <!-- Header -->
+  <div class="header-card">
+    <div class="tag">PREMs ‧ 醫療經驗問卷</div>
+    <h1>心臟手術後<br>醫療經驗問卷</h1>
+    <p class="sub">Post-Cardiac Surgery Patient-Reported Experience Measures</p>
+  </div>
+
+  <div class="notice">
+    <strong>📋 填寫說明</strong>
+    本問卷旨在了解您接受心臟手術相關醫療照護期間的親身經驗，協助我們持續改善醫療品質。
+    您的回覆將予以<strong>保密</strong>，不影響您的後續醫療照護。請依實際感受誠實填答，每題只能選擇一個答案。
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       Section 0 — 基本資料
+  ══════════════════════════════════════════ -->
+  <div class="section active" id="sec-0">
+    <div class="section-title">
+      <span class="num">①</span>基本資料
+    </div>
+    <p class="section-hint">請填寫以下基本資訊，以便後續追蹤與統計分析。</p>
+
+    <div class="q-card" id="qc-name">
+      <div class="q-label">姓名<span class="q-required">*</span></div>
+      <input class="text-input" id="q-name" type="text" placeholder="請輸入您的姓名">
+      <div class="error-msg">此欄位為必填</div>
+    </div>
+
+    <div class="q-card" id="qc-timing">
+      <div class="q-label">問卷填寫時間<span class="q-required">*</span></div>
+      <div class="options-list" id="timing-opts">
+        <label class="option-item">
+          <input type="radio" name="timing" value="出院當天"> 出院當天
+        </label>
+        <label class="option-item">
+          <input type="radio" name="timing" value="出院後1週內"> 出院後 1 週內
+        </label>
+        <label class="option-item">
+          <input type="radio" name="timing" value="出院後1個月內"> 出院後 1 個月內
+        </label>
+        <label class="option-item">
+          <input type="radio" name="timing" value="出院後1-3個月"> 出院後 1–3 個月
+        </label>
+        <label class="option-item">
+          <input type="radio" name="timing" value="出院3個月後"> 出院 3 個月後
+        </label>
+      </div>
+      <div class="error-msg">請選擇填寫時間</div>
+    </div>
+
+    <div class="q-card" id="qc-filler">
+      <div class="q-label">問卷填寫者<span class="q-required">*</span></div>
+      <div class="options-list" id="filler-opts">
+        <label class="option-item">
+          <input type="radio" name="filler" value="本人自行填寫"> 本人自行填寫
+        </label>
+        <label class="option-item">
+          <input type="radio" name="filler" value="家屬或照顧者協助"> 由家屬或照顧者協助填寫
+        </label>
+      </div>
+      <div class="error-msg">請選擇填寫者</div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-next" onclick="nextSection(0)">繼續 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       Section 1 — CARE 量表 Q1–Q5
+  ══════════════════════════════════════════ -->
+  <div class="section" id="sec-1">
+    <div class="section-title">
+      <span class="num">②</span>醫療團隊照護經驗（一）
+    </div>
+    <p class="section-hint">
+      請評估您的心臟外科醫療團隊在本次住院期間各方面的表現。<br>
+      <strong>1 = 非常差　2 = 尚可　3 = 良好　4 = 很好　5 = 優秀</strong>　（如不適用請選「N/A」）
+    </p>
+
+    <div id="care-q1" class="q-card">
+      <div class="q-label">第 1 題　讓您感到安心與放鬆<span class="q-required">*</span></div>
+      <div class="q-hint">術前充分說明、友善親切、尊重您；尤其在手術高度緊張情境下。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care1" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care1" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care1" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care1" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care1" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care1" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q2" class="q-card">
+      <div class="q-label">第 2 題　讓您充分表達擔憂與疑問<span class="q-required">*</span></div>
+      <div class="q-hint">給予足夠時間說明您的感受，不打斷或催促。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care2" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care2" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care2" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care2" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care2" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care2" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q3" class="q-card">
+      <div class="q-label">第 3 題　確實聆聽您的描述<span class="q-required">*</span></div>
+      <div class="q-hint">專注傾聽您的症狀與不適，不因忙碌而忽視。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care3" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care3" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care3" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care3" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care3" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care3" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q4" class="q-card">
+      <div class="q-label">第 4 題　關心您整體身心狀況<span class="q-required">*</span></div>
+      <div class="q-hint">關注您的情緒、家庭支持及生活品質，不僅是生理指標。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care4" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care4" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care4" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care4" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care4" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care4" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q5" class="q-card">
+      <div class="q-label">第 5 題　充分理解您術後的疑慮<span class="q-required">*</span></div>
+      <div class="q-hint">準確掌握您對手術結果、恢復過程的擔憂。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care5" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care5" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care5" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care5" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care5" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care5" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-prev" onclick="prevSection(1)">← 上一步</button>
+      <button class="btn btn-next" onclick="nextSection(1)">繼續 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       Section 2 — CARE 量表 Q6–Q10
+  ══════════════════════════════════════════ -->
+  <div class="section" id="sec-2">
+    <div class="section-title">
+      <span class="num">③</span>醫療團隊照護經驗（二）
+    </div>
+    <p class="section-hint">
+      請繼續評估醫療團隊的照護表現。<br>
+      <strong>1 = 非常差　2 = 尚可　3 = 良好　4 = 很好　5 = 優秀</strong>
+    </p>
+
+    <div id="care-q6" class="q-card">
+      <div class="q-label">第 6 題　展現關懷與同理心<span class="q-required">*</span></div>
+      <div class="q-hint">尤其在術後疼痛或情緒低落時，給予真誠的支持。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care6" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care6" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care6" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care6" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care6" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care6" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q7" class="q-card">
+      <div class="q-label">第 7 題　傳達正向且合理的期望<span class="q-required">*</span></div>
+      <div class="q-hint">誠實告知恢復進度，給予鼓勵但不過度承諾。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care7" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care7" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care7" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care7" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care7" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care7" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q8" class="q-card">
+      <div class="q-label">第 8 題　清楚說明術後注意事項<span class="q-required">*</span></div>
+      <div class="q-hint">傷口護理、用藥、活動限制、回診時間等解說清晰易懂。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care8" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care8" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care8" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care8" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care8" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care8" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q9" class="q-card">
+      <div class="q-label">第 9 題　協助您積極參與康復<span class="q-required">*</span></div>
+      <div class="q-hint">鼓勵心臟復健、自我監測、健康生活型態調整。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care9" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care9" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care9" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care9" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care9" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care9" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q10" class="q-card">
+      <div class="q-label">第 10 題　與您共同規劃出院後照護計畫<span class="q-required">*</span></div>
+      <div class="q-hint">討論回診安排、藥物調整、緊急聯絡方式等。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care10" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care10" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care10" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care10" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care10" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care10" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-prev" onclick="prevSection(2)">← 上一步</button>
+      <button class="btn btn-next" onclick="nextSection(2)">繼續 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       Section 3 — 心臟照護專項 Q11–Q16
+  ══════════════════════════════════════════ -->
+  <div class="section" id="sec-3">
+    <div class="section-title">
+      <span class="num">④</span>心臟手術照護專項評估
+    </div>
+    <p class="section-hint">
+      以下為心臟手術照護的特定評估項目，請依實際經驗評分。<br>
+      <strong>1 = 非常差　2 = 尚可　3 = 良好　4 = 很好　5 = 優秀</strong>
+    </p>
+
+    <div id="care-q11" class="q-card">
+      <div class="q-label">第 11 題　術前說明與知情同意<span class="q-required">*</span></div>
+      <div class="q-hint">手術風險、步驟及替代方案是否獲得充分且易懂的解釋。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care11" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care11" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care11" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care11" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care11" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care11" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q12" class="q-card">
+      <div class="q-label">第 12 題　疼痛管理<span class="q-required">*</span></div>
+      <div class="q-hint">術後疼痛是否獲得及時、有效的處理。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care12" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care12" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care12" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care12" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care12" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care12" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q13" class="q-card">
+      <div class="q-label">第 13 題　心臟復健指導<span class="q-required">*</span></div>
+      <div class="q-hint">是否獲得明確的術後活動、復健及運動指導。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care13" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care13" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care13" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care13" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care13" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care13" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q14" class="q-card">
+      <div class="q-label">第 14 題　用藥說明<span class="q-required">*</span></div>
+      <div class="q-hint">出院藥物的用途、用法及副作用是否獲得清楚說明。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care14" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care14" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care14" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care14" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care14" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care14" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q15" class="q-card">
+      <div class="q-label">第 15 題　緊急狀況處理指引<span class="q-required">*</span></div>
+      <div class="q-hint">如何辨識警示症狀及緊急就醫流程是否說明清楚。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care15" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care15" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care15" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care15" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care15" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care15" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div id="care-q16" class="q-card">
+      <div class="q-label">第 16 題　家屬溝通與支持<span class="q-required">*</span></div>
+      <div class="q-hint">醫療團隊是否妥善與您的家屬溝通，並給予適當支持。</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>非常差</span><span>優秀</span></div>
+        <div class="scale-buttons">
+          <button class="scale-btn na-btn" data-q="care16" data-v="N/A" onclick="selectScale(this)">N/A</button>
+          <button class="scale-btn" data-q="care16" data-v="1" onclick="selectScale(this)">1</button>
+          <button class="scale-btn" data-q="care16" data-v="2" onclick="selectScale(this)">2</button>
+          <button class="scale-btn" data-q="care16" data-v="3" onclick="selectScale(this)">3</button>
+          <button class="scale-btn" data-q="care16" data-v="4" onclick="selectScale(this)">4</button>
+          <button class="scale-btn" data-q="care16" data-v="5" onclick="selectScale(this)">5</button>
+        </div>
+      </div>
+      <div class="error-msg">請選擇評分</div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-prev" onclick="prevSection(3)">← 上一步</button>
+      <button class="btn btn-next" onclick="nextSection(3)">繼續 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       Section 4 — 整體滿意度
+  ══════════════════════════════════════════ -->
+  <div class="section" id="sec-4">
+    <div class="section-title">
+      <span class="num">⑤</span>整體滿意度
+    </div>
+    <p class="section-hint">請評估您對本次心臟手術整體醫療照護的整體感受。</p>
+
+    <div class="q-card" id="qc-overall">
+      <div class="q-label">整體而言，您對本次心臟手術醫療照護的滿意程度<span class="q-required">*</span></div>
+      <div class="q-hint" style="margin-bottom:16px">請選擇 1–10 分，10 分代表非常滿意。</div>
+      <div class="satisfaction-row">
+        <button class="sat-btn s1"  data-v="1"  onclick="selectSat(this)">1</button>
+        <button class="sat-btn s2"  data-v="2"  onclick="selectSat(this)">2</button>
+        <button class="sat-btn s3"  data-v="3"  onclick="selectSat(this)">3</button>
+        <button class="sat-btn s4"  data-v="4"  onclick="selectSat(this)">4</button>
+        <button class="sat-btn s5"  data-v="5"  onclick="selectSat(this)">5</button>
+        <button class="sat-btn s6"  data-v="6"  onclick="selectSat(this)">6</button>
+        <button class="sat-btn s7"  data-v="7"  onclick="selectSat(this)">7</button>
+        <button class="sat-btn s8"  data-v="8"  onclick="selectSat(this)">8</button>
+        <button class="sat-btn s9"  data-v="9"  onclick="selectSat(this)">9</button>
+        <button class="sat-btn s10" data-v="10" onclick="selectSat(this)">10</button>
+      </div>
+      <div class="sat-sub"><span>非常不滿意</span><span>非常滿意</span></div>
+      <div class="error-msg">請選擇滿意度評分</div>
+    </div>
+
+    <div class="q-card" id="qc-recommend">
+      <div class="q-label">您是否會將本院的心臟外科團隊推薦給有需要的親友？<span class="q-required">*</span></div>
+      <div class="options-list" id="recommend-opts">
+        <label class="option-item">
+          <input type="radio" name="recommend" value="非常願意推薦"> 非常願意推薦
+        </label>
+        <label class="option-item">
+          <input type="radio" name="recommend" value="願意推薦"> 願意推薦
+        </label>
+        <label class="option-item">
+          <input type="radio" name="recommend" value="不確定"> 不確定
+        </label>
+        <label class="option-item">
+          <input type="radio" name="recommend" value="不太願意推薦"> 不太願意推薦
+        </label>
+        <label class="option-item">
+          <input type="radio" name="recommend" value="不願意推薦"> 不願意推薦
+        </label>
+      </div>
+      <div class="error-msg">請選擇一個選項</div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-prev" onclick="prevSection(4)">← 上一步</button>
+      <button class="btn btn-next" onclick="nextSection(4)">繼續 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       Section 5 — 開放式意見 + 送出
+  ══════════════════════════════════════════ -->
+  <div class="section" id="sec-5">
+    <div class="section-title">
+      <span class="num">⑥</span>開放式意見（選填）
+    </div>
+    <p class="section-hint">您的具體意見對我們改善服務最有幫助，感謝您撥冗填寫。</p>
+
+    <div class="q-card">
+      <div class="q-label">1. 本次住院期間，您最滿意的照護經驗是什麼？</div>
+      <textarea class="textarea-input" id="q-open1" placeholder="請自由填寫……"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label">2. 您認為我們最需要改善的地方是什麼？</div>
+      <textarea class="textarea-input" id="q-open2" placeholder="請自由填寫……"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label">3. 關於出院後的照護與追蹤，您有哪些疑慮或建議？</div>
+      <textarea class="textarea-input" id="q-open3" placeholder="請自由填寫……"></textarea>
+    </div>
+
+    <div class="q-card">
+      <div class="q-label">4. 其他任何您想告訴我們的事</div>
+      <textarea class="textarea-input" id="q-open4" placeholder="請自由填寫……"></textarea>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-prev" onclick="prevSection(5)">← 上一步</button>
+      <button class="btn btn-submit" id="submit-btn" onclick="submitForm()">
+        提交問卷 ✓
+      </button>
+    </div>
+
+    <p class="form-footer">
+      ※ 本問卷改編自 CARE（Consultation and Relational Empathy）量表，<br>
+      原版由 Dr Stewart Mercer 等人開發（2000–2003）。<br>
+      您的填答將完全保密，僅用於醫療品質改善。
+    </p>
+  </div>
+
+  <!-- Thank You -->
+  <div id="thank-you">
+    <div class="ty-icon">✓</div>
+    <h2>感謝您的填寫！</h2>
+    <div class="ty-divider"></div>
+    <p>
+      您的回饋對我們持續改善心臟手術照護品質非常重要。<br>
+      如有任何不適或疑問，請隨時與您的醫療團隊聯繫。<br><br>
+      祝您早日康復。
+    </p>
+  </div>
+
+</div><!-- /.container -->
+</div><!-- /#app -->
+
+<script>
+// ── State ─────────────────────────────────────────
+const TOTAL_SECTIONS = 6;
+let currentSection = 0;
+const answers = {};   // key → value
+
+// ── Scale buttons ─────────────────────────────────
+function selectScale(btn) {
+  const q = btn.dataset.q;
+  document.querySelectorAll(`[data-q="${q}"]`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[q] = btn.dataset.v;
+  // mark card answered
+  const card = btn.closest('.q-card');
+  card.classList.add('answered');
+  card.classList.remove('error');
+}
+
+// ── Satisfaction buttons ──────────────────────────
+function selectSat(btn) {
+  document.querySelectorAll('.sat-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers['overall'] = btn.dataset.v;
+  document.getElementById('qc-overall').classList.add('answered');
+  document.getElementById('qc-overall').classList.remove('error');
+}
+
+// ── Radio / Checkbox: mobile-safe delegated handler ──────────
+// 改用點擊 div 的方式，完全繞過 iOS label+flex 的觸控 bug
+document.querySelectorAll('.option-item').forEach(function(item) {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();          // 阻止 label 觸發原生行為
+    const inp = item.querySelector('input');
+    if (!inp) return;
+    const name = inp.name;
+    const value = inp.value;
+
+    if (inp.type === 'radio') {
+      // 取消同群組其他選項
+      document.querySelectorAll('input[name="' + name + '"]').forEach(function(r) {
+        r.checked = false;
+        r.closest('.option-item').classList.remove('selected');
+      });
+      inp.checked = true;
+      item.classList.add('selected');
+      answers[name] = value;       // 寫入 answers 供驗證使用
+
+    } else if (inp.type === 'checkbox') {
+      inp.checked = !inp.checked;
+      item.classList.toggle('selected', inp.checked);
+      if (!answers[name] || !Array.isArray(answers[name])) answers[name] = [];
+      if (inp.checked) {
+        if (!answers[name].includes(value)) answers[name].push(value);
+      } else {
+        answers[name] = answers[name].filter(function(v){ return v !== value; });
+      }
+    }
+
+    // 標記所屬題卡已作答
+    const card = item.closest('.q-card');
+    if (card) { card.classList.add('answered'); card.classList.remove('error'); }
+  });
+});
+
+// ── Validation per section ────────────────────────
+function validateSection(idx) {
+  let ok = true;
+
+  const clearErr = id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('error');
+  };
+  const setErr = id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.add('error'); ok = false; }
+  };
+
+  if (idx === 0) {
+    const nameVal = document.getElementById('q-name').value.trim();
+    if (!nameVal)           setErr('qc-name');   else clearErr('qc-name');
+    if (!answers['timing']) setErr('qc-timing'); else clearErr('qc-timing');
+    if (!answers['filler']) setErr('qc-filler'); else clearErr('qc-filler');
+  }
+
+  if (idx === 1) {
+    ['care1','care2','care3','care4','care5'].forEach(k => {
+      const card = document.getElementById(`care-q${k.replace('care','')}` );
+      if (!answers[k]) { card.classList.add('error'); ok = false; }
+      else card.classList.remove('error');
+    });
+  }
+
+  if (idx === 2) {
+    ['care6','care7','care8','care9','care10'].forEach(k => {
+      const num = k.replace('care','');
+      const card = document.getElementById(`care-q${num}`);
+      if (!answers[k]) { card.classList.add('error'); ok = false; }
+      else card.classList.remove('error');
+    });
+  }
+
+  if (idx === 3) {
+    ['care11','care12','care13','care14','care15','care16'].forEach(k => {
+      const num = k.replace('care','');
+      const card = document.getElementById(`care-q${num}`);
+      if (!answers[k]) { card.classList.add('error'); ok = false; }
+      else card.classList.remove('error');
+    });
+  }
+
+  if (idx === 4) {
+    if (!answers['overall'])   setErr('qc-overall');   else clearErr('qc-overall');
+    if (!answers['recommend']) {
+      // fallback: also check DOM in case answers wasn't written
+      const recDom = document.querySelector('input[name="recommend"]:checked');
+      if (recDom) { answers['recommend'] = recDom.value; clearErr('qc-recommend'); }
+      else setErr('qc-recommend');
+    } else clearErr('qc-recommend');
+  }
+
+  return ok;
+}
+
+// ── Navigation ────────────────────────────────────
+function showSection(idx) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(`sec-${idx}`).classList.add('active');
+  currentSection = idx;
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextSection(from) {
+  if (!validateSection(from)) {
+    // scroll to first error
+    const firstErr = document.querySelector('.section.active .q-card.error');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  showSection(from + 1);
+}
+
+function prevSection(from) {
+  showSection(from - 1);
+}
+
+// ── Progress ──────────────────────────────────────
+function updateProgress() {
+  const pct = Math.round((currentSection / TOTAL_SECTIONS) * 100);
+  document.getElementById('progress-bar-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-text').textContent =
+    currentSection < TOTAL_SECTIONS
+      ? `第 ${currentSection + 1} 步，共 ${TOTAL_SECTIONS} 步`
+      : '已完成';
+}
+
+// ── Collect all answers ───────────────────────────
+function collectData() {
+  const data = {
+    timestamp:   new Date().toLocaleString('zh-TW'),
+    姓名:         document.getElementById('q-name').value.trim(),
+    填寫時間:       answers['timing']  || '',
+    填寫者:        answers['filler']  || '',
+    // CARE 1–10
+    Q1_安心放鬆:    answers['care1']  || '',
+    Q2_表達疑問:    answers['care2']  || '',
+    Q3_確實聆聽:    answers['care3']  || '',
+    Q4_整體身心:    answers['care4']  || '',
+    Q5_理解疑慮:    answers['care5']  || '',
+    Q6_關懷同理:    answers['care6']  || '',
+    Q7_正向期望:    answers['care7']  || '',
+    Q8_術後說明:    answers['care8']  || '',
+    Q9_參與康復:    answers['care9']  || '',
+    Q10_照護計畫:   answers['care10'] || '',
+    // 心臟專項
+    Q11_術前說明:   answers['care11'] || '',
+    Q12_疼痛管理:   answers['care12'] || '',
+    Q13_復健指導:   answers['care13'] || '',
+    Q14_用藥說明:   answers['care14'] || '',
+    Q15_緊急指引:   answers['care15'] || '',
+    Q16_家屬溝通:   answers['care16'] || '',
+    // 整體
+    整體滿意度:      answers['overall'] || '',
+    推薦意願:        answers['recommend'] || '',
+    // 開放式
+    最滿意經驗:      document.getElementById('q-open1').value.trim(),
+    需改善之處:      document.getElementById('q-open2').value.trim(),
+    出院後疑慮:      document.getElementById('q-open3').value.trim(),
+    其他意見:        document.getElementById('q-open4').value.trim(),
+  };
+  return data;
+}
+
+// ── Submit ────────────────────────────────────────
+async function submitForm() {
+  if (!validateSection(5)) return;
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>提交中…';
+
+  const data = collectData();
+
+  // ══════════════════════════════════════════════
+  //  此 URL 指向手術病人管理系統的 Apps Script Web App
+  //  問卷資料會寫入「滿意度問卷」工作表並反映在儀表板
+  // ══════════════════════════════════════════════
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzr5eDnHyyq2hWZJ1pD4x5z7h8LkabeZMNDcl6o1lWx0e3bE4CLDCkmqYCzPA1qagU2ug/exec';
+
+  try {
+    // 用 FormData 而非 JSON，與系統其他端一致
+    const formData = new FormData();
+    formData.append('action', 'submitSurvey');
+    Object.keys(data).forEach(k => formData.append(k, data[k]));
+
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode:   'no-cors',
+      body:   formData,
+    });
+  } catch(e) {
+    // no-cors 一定會 throw — 視為成功
+  }
+
+  // Show thank you
+  document.getElementById('app').querySelector('.container').innerHTML =
+    document.getElementById('thank-you').outerHTML.replace('display:none','');
+  document.getElementById('thank-you').style.display = 'block';
+
+  document.getElementById('progress-bar-fill').style.width = '100%';
+  document.getElementById('progress-pct').textContent = '100%';
+  document.getElementById('progress-text').textContent = '已完成';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Init
+updateProgress();
+</script>
+</body>
+</html>
