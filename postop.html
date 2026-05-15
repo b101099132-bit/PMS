@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>手術完成與術後追蹤 — 團隊紀錄</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #FAF7F2;
+  --paper: #FFFFFF;
+  --ink: #1A1A1A;
+  --ink-soft: #5C5C5C;
+  --ink-faint: #8A8580;
+  --teal: #1F5A5A;
+  --teal-tint: #F5F9F9;
+  --teal-soft: #E6EDED;
+  --teal-hover: #2D6F6F;
+  --gold: #A87B4D;
+  --plum: #6B5876;
+  --plum-tint: #F2EFF4;
+  --border: #E8E2D5;
+  --border-strong: #D4CDB8;
+  --error: #B85450;
+  --error-bg: #FBEFEE;
+  --success: #4A7A5A;
+  --success-bg: #EDF3EE;
+  --disabled: #F5F2EC;
+}
+
+body {
+  font-family: 'Noto Sans TC', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 20px 16px 60px;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 880px; margin: 0 auto; }
+
+/* ========== Header ========== */
+header {
+  margin: 16px 0 28px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: baseline; gap: 14px; }
+.brand h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.brand .eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.role-tag {
+  background: var(--plum);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+/* ========== Key bar ========== */
+.key-bar {
+  background: var(--teal-tint);
+  border: 1px solid var(--teal-soft);
+  border-radius: 3px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.key-bar label {
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 500;
+  margin: 0;
+}
+.key-bar input {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+}
+.key-bar .hint {
+  width: 100%;
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+/* ========== Steps ========== */
+.steps {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 22px;
+  font-size: 13px;
+  color: var(--ink-faint);
+  font-family: 'Noto Serif TC', serif;
+}
+.step-item { display: flex; align-items: center; gap: 8px; }
+.step-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--border);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+.step-item.active .step-num { background: var(--teal); }
+.step-item.done .step-num { background: var(--success); }
+.step-item.active { color: var(--ink); }
+.step-arrow { color: var(--ink-faint); }
+
+/* ========== Section ========== */
+.section {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 26px;
+  margin-bottom: 18px;
+}
+@media (max-width: 600px) { .section { padding: 22px 18px; } }
+
+.section.disabled { background: var(--disabled); pointer-events: none; opacity: 0.55; }
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-bottom: 16px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.section-num {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+.section-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 19px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.section-sub {
+  font-size: 13px;
+  color: var(--ink-faint);
+  margin-left: 8px;
+}
+.section-action {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--teal);
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  font-family: inherit;
+}
+
+/* ========== Sub-header ========== */
+.subhead {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 15px;
+  color: var(--plum);
+  font-weight: 600;
+  margin: 24px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--border);
+}
+.subhead:first-child { margin-top: 0; }
+
+/* ========== Patient card ========== */
+.patient-card {
+  background: var(--teal-tint);
+  border: 1px solid var(--teal-soft);
+  border-left: 3px solid var(--teal);
+  border-radius: 3px;
+  padding: 16px 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.patient-card .item { display: flex; flex-direction: column; gap: 3px; }
+.patient-card .item-label {
+  font-size: 11px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+.patient-card .item-value {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.patient-card .item-value.mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+}
+.patient-card .item-value.warn { color: var(--gold); font-size: 13px; }
+.patient-card .span-all { grid-column: 1 / -1; }
+
+/* ========== Fields ========== */
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.req { color: var(--error); margin-left: 2px; }
+.hint {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+
+input[type="text"], input[type="tel"], input[type="number"],
+input[type="date"], input[type="datetime-local"], textarea, select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 14px;
+  background: var(--paper);
+  color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-height: 40px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+input[type="number"], input[type="datetime-local"] {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(31, 90, 90, 0.12);
+}
+textarea { min-height: 64px; resize: vertical; line-height: 1.6; font-family: 'Noto Sans TC', sans-serif; font-size: 14px; }
+
+select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1.5L6 6.5L11 1.5' stroke='%235C5C5C' stroke-width='1.5' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.row { display: grid; gap: 12px; }
+.row.row-2 { grid-template-columns: 1fr 1fr; }
+.row.row-3 { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 640px) {
+  .row.row-2, .row.row-3 { grid-template-columns: 1fr; }
+}
+
+/* ========== Milestone rows ========== */
+.milestone-list { display: flex; flex-direction: column; gap: 8px; }
+.milestone {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+.milestone-row-2 {
+  display: grid;
+  grid-template-columns: 180px 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+.milestone-label {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.milestone-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.milestone-input input[type="datetime-local"] { flex: 1; min-width: 0; }
+.btn-now {
+  padding: 7px 12px;
+  font-size: 12px;
+  background: var(--paper);
+  color: var(--teal);
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.btn-now:hover {
+  border-color: var(--teal);
+  background: var(--teal-tint);
+}
+@media (max-width: 640px) {
+  .milestone, .milestone-row-2 {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .milestone-row-2 { grid-template-rows: auto auto; }
+  .milestone-label { font-size: 13px; }
+}
+
+/* ========== Radio (pill style) ========== */
+.radio-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
+  gap: 6px;
+}
+.option { position: relative; }
+.option input { position: absolute; opacity: 0; pointer-events: none; }
+.option label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  font-size: 13px;
+  margin: 0;
+  cursor: pointer;
+  min-height: 38px;
+  transition: all 0.15s ease;
+  background: var(--paper);
+  font-weight: 500;
+}
+.option label:hover { border-color: var(--teal); }
+.option input:checked + label {
+  border-color: var(--teal);
+  background: var(--teal);
+  color: white;
+}
+
+/* ========== Buttons ========== */
+.btn {
+  padding: 11px 24px;
+  border: none;
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.03em;
+  min-height: 42px;
+}
+.btn-primary { background: var(--teal); color: white; }
+.btn-primary:hover:not(:disabled) {
+  background: var(--teal-hover);
+  box-shadow: 0 4px 12px rgba(31, 90, 90, 0.18);
+}
+.btn-secondary {
+  background: var(--paper);
+  color: var(--teal);
+  border: 1px solid var(--border-strong);
+}
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--teal);
+  background: var(--teal-tint);
+}
+.btn:disabled { background: var(--ink-faint); cursor: not-allowed; }
+.btn-block { width: 100%; padding: 14px; font-size: 16px; font-weight: 600; }
+
+/* ========== Save area ========== */
+.save-area {
+  margin-top: 28px;
+  position: sticky;
+  bottom: 16px;
+  background: var(--paper);
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+}
+.save-note {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+/* ========== Alerts ========== */
+.alert {
+  padding: 12px 16px;
+  border-radius: 3px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  display: none;
+}
+.alert.show { display: block; }
+.alert-error { background: var(--error-bg); color: var(--error); border-left: 3px solid var(--error); }
+.alert-success { background: var(--success-bg); color: var(--success); border-left: 3px solid var(--success); }
+.alert-info { background: var(--plum-tint); color: var(--plum); border-left: 3px solid var(--plum); }
+
+.error-msg {
+  color: var(--error);
+  font-size: 12px;
+  margin-top: 5px;
+  display: none;
+  font-weight: 500;
+}
+.field.has-error input,
+.field.has-error select,
+.field.has-error textarea {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
+.field.has-error .error-msg { display: block; }
+
+/* ========== Success ========== */
+.success-screen {
+  display: none;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 48px 32px;
+  text-align: center;
+}
+.success-screen.show { display: block; }
+.success-icon {
+  width: 64px; height: 64px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: var(--success);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 32px;
+  font-weight: 300;
+}
+.success-screen h2 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.success-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+/* ========== Loading ========== */
+.loading {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: -2px;
+  margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+footer {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="brand">
+      <div>
+        <div class="eyebrow">Post-op Recording</div>
+        <h1>手術完成與術後追蹤</h1>
+      </div>
+    </div>
+    <span class="role-tag">團隊紀錄</span>
+  </header>
+
+  <div class="key-bar" id="keyBar">
+    <label for="doctor_key">通行碼</label>
+    <input type="password" id="doctor_key" placeholder="輸入團隊通行碼" autocomplete="off">
+    <div class="hint">與醫師預約表單共用同一組通行碼。首次進入或重新整理後需輸入。</div>
+  </div>
+
+  <div class="steps">
+    <div class="step-item active" id="step1Indicator"><div class="step-num">1</div><span>查詢病人</span></div>
+    <span class="step-arrow">→</span>
+    <div class="step-item" id="step2Indicator"><div class="step-num">2</div><span>填寫紀錄</span></div>
+    <span class="step-arrow">→</span>
+    <div class="step-item" id="step3Indicator"><div class="step-num">3</div><span>儲存</span></div>
+  </div>
+
+  <div id="mainForm">
+
+    <!-- ============ Step 1: Lookup ============ -->
+    <section class="section" id="lookupSection">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <span class="section-title">查詢病人</span>
+      </div>
+
+      <div class="alert alert-error" id="lookupAlert"></div>
+
+      <div class="row row-2">
+        <div class="field">
+          <label for="lookup_birthdate">出生年月日 <span class="req">*</span></label>
+          <input type="date" id="lookup_birthdate">
+          <div class="error-msg">請選擇出生年月日</div>
+        </div>
+        <div class="field">
+          <label for="lookup_id4">身分證末 4 碼 <span class="req">*</span></label>
+          <input type="text" id="lookup_id4" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off">
+          <div class="error-msg">請填寫 4 位數字</div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="lookupBtn">查詢病人</button>
+    </section>
+
+    <!-- ============ Step 2: Forms ============ -->
+    <section class="section disabled" id="formSection">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <span class="section-title">填寫紀錄</span>
+        <span class="section-sub" id="recordModeHint"></span>
+        <button type="button" class="section-action" id="changePatientBtn" style="display:none">換一位病人</button>
+      </div>
+
+      <!-- Patient + scheduled info card -->
+      <div class="patient-card" id="patientCard" style="display:none">
+        <div class="item"><span class="item-label">姓名</span><span class="item-value" id="pc_name">—</span></div>
+        <div class="item"><span class="item-label">性別 / 年齡</span><span class="item-value" id="pc_gender_age">—</span></div>
+        <div class="item"><span class="item-label">病人主鍵</span><span class="item-value mono" id="pc_pk">—</span></div>
+        <div class="item"><span class="item-label">預定手術日</span><span class="item-value" id="pc_scheduled">—</span></div>
+        <div class="item"><span class="item-label">術式</span><span class="item-value" id="pc_surgery">—</span></div>
+        <div class="item"><span class="item-label">術前 eGFR / LVEF</span><span class="item-value mono" id="pc_egfr_lvef">—</span></div>
+      </div>
+
+      <div class="alert alert-info" id="modeAlert" style="display:none"></div>
+
+      <form id="recordForm">
+
+        <!-- ============ Section A: Surgery Completion ============ -->
+        <div class="subhead">A. 手術完成登錄（更新病人主檔）</div>
+
+        <div class="row row-2">
+          <div class="field">
+            <label for="actual_date">實際手術日</label>
+            <input type="date" id="actual_date" name="actual_date">
+          </div>
+          <div class="field">
+            <label for="surgery_code">手術代碼</label>
+            <input type="text" id="surgery_code" name="surgery_code" placeholder="ICD-10-PCS / 健保碼">
+          </div>
+        </div>
+
+        <div class="field" data-name="surgery_status">
+          <label>手術狀態（完成或取消時更新）</label>
+          <div class="radio-group">
+            <div class="option">
+              <input type="radio" id="ss_done" name="surgery_status" value="已完成">
+              <label for="ss_done">已完成</label>
+            </div>
+            <div class="option">
+              <input type="radio" id="ss_cancel" name="surgery_status" value="取消">
+              <label for="ss_cancel">取消</label>
+            </div>
+            <div class="option">
+              <input type="radio" id="ss_reschedule" name="surgery_status" value="改期">
+              <label for="ss_reschedule">改期</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="intra_note">術中備忘</label>
+          <textarea id="intra_note" name="intra_note" placeholder="出血量、輸液、特殊狀況…"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="post_note">術後備忘</label>
+          <textarea id="post_note" name="post_note" placeholder="總體進度、出院規劃…"></textarea>
+        </div>
+
+        <!-- ============ Section B: Post-op Tracking ============ -->
+        <div class="subhead">B. 術後追蹤紀錄（寫入「術後追蹤紀錄」工作表）</div>
+
+        <!-- B.1 Basic -->
+        <div class="row row-2">
+          <div class="field" data-name="eras">
+            <label>是否走 ERAS 流程</label>
+            <div class="radio-group">
+              <div class="option">
+                <input type="radio" id="eras_y" name="eras" value="是">
+                <label for="eras_y">是</label>
+              </div>
+              <div class="option">
+                <input type="radio" id="eras_n" name="eras" value="否">
+                <label for="eras_n">否</label>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="anesthetist">麻醉醫師 (Anest.)</label>
+            <input type="text" id="anesthetist" name="anesthetist">
+          </div>
+        </div>
+
+        <!-- B.2 Milestones -->
+        <div class="subhead" style="font-size:14px;color:var(--ink-soft);margin-top:18px">恢復里程碑（datetime，可隨時填入或更新）</div>
+
+        <div class="milestone-list" id="milestoneList">
+          <!-- Filled by JS -->
+        </div>
+
+        <!-- B.3 Clinical Observations -->
+        <div class="subhead" style="font-size:14px;color:var(--ink-soft);margin-top:18px">臨床觀察與 AKI 評估</div>
+
+        <div class="field" data-name="wound">
+          <label>傷口狀況</label>
+          <div class="radio-group">
+            <div class="option">
+              <input type="radio" id="w_good" name="wound" value="良好">
+              <label for="w_good">良好</label>
+            </div>
+            <div class="option">
+              <input type="radio" id="w_red" name="wound" value="紅腫">
+              <label for="w_red">紅腫</label>
+            </div>
+            <div class="option">
+              <input type="radio" id="w_ooze" name="wound" value="滲液">
+              <label for="w_ooze">滲液</label>
+            </div>
+            <div class="option">
+              <input type="radio" id="w_crack" name="wound" value="裂開">
+              <label for="w_crack">裂開</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row row-3">
+          <div class="field">
+            <label for="max_temp">最高體溫 (°C)</label>
+            <input type="number" id="max_temp" name="max_temp" step="0.1" min="34" max="42">
+          </div>
+          <div class="field">
+            <label for="max_pain">最高疼痛 (0–10)</label>
+            <input type="number" id="max_pain" name="max_pain" step="1" min="0" max="10">
+          </div>
+          <div class="field">
+            <label for="egfr_post">術後 eGFR</label>
+            <input type="number" id="egfr_post" name="egfr_post" step="0.1" min="0" max="200">
+            <div class="hint">mL/min/1.73m²</div>
+          </div>
+        </div>
+
+        <div class="row row-2">
+          <div class="field">
+            <label for="aki">AKI 判讀</label>
+            <select id="aki" name="aki">
+              <option value="">未判讀</option>
+              <option>無AKI</option>
+              <option>Stage 1</option>
+              <option>Stage 2</option>
+              <option>Stage 3</option>
+              <option>疑似</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="event">異常事件</label>
+            <select id="event" name="event">
+              <option value="">未填</option>
+              <option>無</option>
+              <option>發燒</option>
+              <option>出血</option>
+              <option>心律不整</option>
+              <option>感染</option>
+              <option>AKI</option>
+              <option>其他</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="event_action">異常處置</label>
+          <textarea id="event_action" name="event_action" placeholder="例：抗生素治療 3 天、加做超音波…"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="pn_note">備註</label>
+          <textarea id="pn_note" name="pn_note"></textarea>
+        </div>
+
+        <div class="row row-2">
+          <div class="field">
+            <label for="recorder">紀錄者</label>
+            <input type="text" id="recorder" name="recorder" placeholder="例：王護理師">
+          </div>
+          <div class="field">
+            <label for="record_date">紀錄完成日</label>
+            <input type="date" id="record_date" name="record_date">
+          </div>
+        </div>
+
+        <div class="alert alert-error" id="saveAlert"></div>
+
+        <div class="save-area">
+          <button type="submit" class="btn btn-primary btn-block" id="saveBtn">儲存全部</button>
+          <p class="save-note">空白欄位不會覆蓋既有資料；只更新有填寫的欄位</p>
+        </div>
+      </form>
+    </section>
+
+  </div>
+
+  <!-- ============ Success Screen ============ -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✓</div>
+    <h2>紀錄已儲存</h2>
+    <p style="color:var(--ink-soft)" id="successMsg">病人主檔與術後追蹤紀錄皆已更新</p>
+    <div class="success-actions">
+      <button type="button" class="btn btn-secondary" id="continueBtn">繼續編輯此病人</button>
+      <button type="button" class="btn btn-secondary" id="anotherBtn">換一位病人</button>
+      <button type="button" class="btn btn-primary" id="finishBtn">結束</button>
+    </div>
+  </div>
+
+  <footer>手術病人管理系統 · 團隊紀錄 v1.0</footer>
+</div>
+
+<script>
+// ============================================================
+// ⚠️ 部署前請替換為您的 Google Apps Script Web App URL
+// ============================================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzr5eDnHyyq2hWZJ1pD4x5z7h8LkabeZMNDcl6o1lWx0e3bE4CLDCkmqYCzPA1qagU2ug/exec';
+
+// 14 個里程碑事件（與 Apps Script 對應的 name 欄位）
+const MILESTONES = [
+  { name: 'm_icu', label: '抵達加護病房' },
+  { name: 'm_water', label: '首次 Try Water' },
+  { name: 'm_food_order', label: '首次固體食物（醫囑）' },
+  { name: 'm_food_eat', label: '首次固體食物進食' },
+  { name: 'm_triflow_start', label: '開始 Triflow', hasBalls: true },
+  { name: 'm_triflow_1', label: 'Triflow 1 顆球' },
+  { name: 'm_triflow_2', label: 'Triflow 2 顆球' },
+  { name: 'm_triflow_3', label: 'Triflow 3 顆球' },
+  { name: 'm_tube_first', label: '拔第一根胸管' },
+  { name: 'm_tube_all', label: '移除全部胸管' },
+  { name: 'm_urine', label: '自解尿' },
+  { name: 'm_sit', label: '第一次上坐' },
+  { name: 'm_oob_sit', label: '第一次下床坐' },
+  { name: 'm_walk', label: '第一次下床走路' },
+];
+
+const $ = (id) => document.getElementById(id);
+let currentPatient = null;
+let isUpdate = false; // 是否為更新既有紀錄
+
+// ========== Build milestone rows ==========
+function buildMilestones() {
+  const html = MILESTONES.map(m => {
+    if (m.hasBalls) {
+      return `
+        <div class="milestone-row-2">
+          <div class="milestone-label">${m.label}</div>
+          <div class="milestone-input">
+            <input type="datetime-local" name="${m.name}" id="${m.name}">
+          </div>
+          <button type="button" class="btn-now" data-target="${m.name}">現在</button>
+          <div class="milestone-label" style="font-size:13px;color:var(--ink-soft)">球顆數</div>
+          <input type="number" name="m_triflow_balls" id="m_triflow_balls" min="0" max="3" step="1" style="max-width:120px">
+          <span></span>
+        </div>`;
+    }
+    return `
+      <div class="milestone-row-2">
+        <div class="milestone-label">${m.label}</div>
+        <div class="milestone-input">
+          <input type="datetime-local" name="${m.name}" id="${m.name}">
+        </div>
+        <button type="button" class="btn-now" data-target="${m.name}">現在</button>
+      </div>`;
+  }).join('');
+  $('milestoneList').innerHTML = html;
+
+  // Bind "now" buttons
+  $('milestoneList').querySelectorAll('.btn-now').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = $(btn.dataset.target);
+      if (target) {
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        target.value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+      }
+    });
+  });
+}
+buildMilestones();
+
+// ========== Doctor key persistence ==========
+if (window.location.hash.startsWith('#k=')) {
+  $('doctor_key').value = decodeURIComponent(window.location.hash.slice(3));
+}
+$('doctor_key').addEventListener('change', () => {
+  const v = $('doctor_key').value;
+  if (v) history.replaceState(null, '', '#k=' + encodeURIComponent(v));
+});
+
+// ========== JSONP ==========
+function jsonp(url, params, timeoutMs = 15000) {
+  return new Promise((resolve, reject) => {
+    const cb = '_jsonp_cb_' + Date.now() + '_' + Math.floor(Math.random()*1e6);
+    const usp = new URLSearchParams({ ...params, callback: cb });
+    const script = document.createElement('script');
+    const timer = setTimeout(() => { cleanup(); reject(new Error('查詢逾時')); }, timeoutMs);
+    function cleanup() { delete window[cb]; script.remove(); clearTimeout(timer); }
+    window[cb] = (data) => { cleanup(); resolve(data); };
+    script.onerror = () => { cleanup(); reject(new Error('網路錯誤')); };
+    script.src = url + '?' + usp.toString();
+    document.body.appendChild(script);
+  });
+}
+
+// ========== Lookup ==========
+$('lookupBtn').addEventListener('click', async () => {
+  $('lookupAlert').classList.remove('show');
+  $('lookup_birthdate').closest('.field').classList.remove('has-error');
+  $('lookup_id4').closest('.field').classList.remove('has-error');
+
+  const key = $('doctor_key').value.trim();
+  const birthdate = $('lookup_birthdate').value;
+  const id4 = $('lookup_id4').value.trim();
+
+  if (!key) { showAlert('lookupAlert', '請輸入通行碼'); return; }
+  let valid = true;
+  if (!birthdate) { $('lookup_birthdate').closest('.field').classList.add('has-error'); valid = false; }
+  if (!/^[0-9]{4}$/.test(id4)) { $('lookup_id4').closest('.field').classList.add('has-error'); valid = false; }
+  if (!valid) return;
+
+  const pk = birthdate.replace(/-/g, '') + '-' + id4;
+
+  $('lookupBtn').disabled = true;
+  $('lookupBtn').innerHTML = '<span class="loading"></span>查詢中…';
+
+  try {
+    const res = await jsonp(APPS_SCRIPT_URL, { action: 'lookupPostop', pk, key });
+
+    if (res.error === 'unauthorized') {
+      showAlert('lookupAlert', '通行碼錯誤');
+    } else if (!res.found) {
+      showAlert('lookupAlert', '找不到符合的病人。請確認資料或先建立病人主檔。');
+    } else {
+      currentPatient = res;
+      showPatient(res);
+    }
+  } catch (err) {
+    showAlert('lookupAlert', '查詢失敗：' + err.message);
+  } finally {
+    $('lookupBtn').disabled = false;
+    $('lookupBtn').textContent = '查詢病人';
+  }
+});
+
+function showAlert(id, msg) {
+  const el = $(id);
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function showPatient(p) {
+  $('pc_name').textContent = p.name || '—';
+  $('pc_gender_age').textContent = `${p.gender || '—'} / ${p.age != null ? p.age + ' 歲' : '—'}`;
+  $('pc_pk').textContent = p.pk || '—';
+  $('pc_scheduled').textContent = p.currentScheduledDate || '—';
+  $('pc_surgery').textContent = p.currentSurgery || '—';
+  const eg = (p.preopEgfr != null && p.preopEgfr !== '') ? p.preopEgfr : '—';
+  const lv = (p.preopLvef != null && p.preopLvef !== '') ? p.preopLvef + '%' : '—';
+  $('pc_egfr_lvef').textContent = `${eg} / ${lv}`;
+
+  $('patientCard').style.display = 'grid';
+  $('formSection').classList.remove('disabled');
+  $('changePatientBtn').style.display = 'inline-block';
+  $('step1Indicator').classList.add('done');
+  $('step1Indicator').classList.remove('active');
+  $('step2Indicator').classList.add('active');
+
+  // Fill existing data if any
+  fillExisting(p);
+
+  $('formSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ========== Fill existing values ==========
+function fillExisting(p) {
+  // Section A: from 病人主檔
+  if (p.actualDate) $('actual_date').value = p.actualDate;
+  if (p.surgeryCode) $('surgery_code').value = p.surgeryCode;
+  if (p.currentSurgeryStatus) {
+    const radio = document.querySelector(`input[name="surgery_status"][value="${p.currentSurgeryStatus}"]`);
+    if (radio) radio.checked = true;
+  }
+  if (p.intraNote) $('intra_note').value = p.intraNote;
+  if (p.postNote) $('post_note').value = p.postNote;
+
+  // Section B: from 術後追蹤紀錄
+  const po = p.postop || {};
+  isUpdate = po.exists === true;
+
+  if (isUpdate) {
+    $('modeAlert').textContent = '此病人已有術後追蹤紀錄，將以更新方式儲存。已填的欄位顯示原值。';
+    $('modeAlert').className = 'alert alert-info show';
+    $('recordModeHint').textContent = '（更新模式）';
+  } else {
+    $('modeAlert').textContent = '此病人尚無術後追蹤紀錄，將建立新紀錄。';
+    $('modeAlert').className = 'alert alert-info show';
+    $('recordModeHint').textContent = '（新增模式）';
+  }
+
+  if (po.eras) {
+    const r = document.querySelector(`input[name="eras"][value="${po.eras}"]`);
+    if (r) r.checked = true;
+  }
+  if (po.anesthetist) $('anesthetist').value = po.anesthetist;
+
+  // Milestones
+  MILESTONES.forEach(m => {
+    if (po[m.name]) $(m.name).value = po[m.name];
+  });
+  if (po.m_triflow_balls != null && po.m_triflow_balls !== '') {
+    $('m_triflow_balls').value = po.m_triflow_balls;
+  }
+
+  // Clinical
+  if (po.wound) {
+    const r = document.querySelector(`input[name="wound"][value="${po.wound}"]`);
+    if (r) r.checked = true;
+  }
+  if (po.max_temp != null && po.max_temp !== '') $('max_temp').value = po.max_temp;
+  if (po.max_pain != null && po.max_pain !== '') $('max_pain').value = po.max_pain;
+  if (po.egfr_post != null && po.egfr_post !== '') $('egfr_post').value = po.egfr_post;
+  if (po.aki) $('aki').value = po.aki;
+  if (po.event) $('event').value = po.event;
+  if (po.event_action) $('event_action').value = po.event_action;
+  if (po.pn_note) $('pn_note').value = po.pn_note;
+  if (po.recorder) $('recorder').value = po.recorder;
+  if (po.record_date) $('record_date').value = po.record_date;
+}
+
+// ========== Change patient ==========
+function resetAll() {
+  currentPatient = null;
+  isUpdate = false;
+  $('recordForm').reset();
+  $('patientCard').style.display = 'none';
+  $('formSection').classList.add('disabled');
+  $('changePatientBtn').style.display = 'none';
+  $('modeAlert').classList.remove('show');
+  $('recordModeHint').textContent = '';
+  $('lookup_birthdate').value = '';
+  $('lookup_id4').value = '';
+  $('step1Indicator').classList.add('active');
+  $('step1Indicator').classList.remove('done');
+  $('step2Indicator').classList.remove('active', 'done');
+  $('step3Indicator').classList.remove('active');
+}
+
+$('changePatientBtn').addEventListener('click', () => {
+  resetAll();
+  $('lookupSection').scrollIntoView({ behavior: 'smooth' });
+  setTimeout(() => $('lookup_birthdate').focus(), 300);
+});
+
+// ========== Save ==========
+$('recordForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  $('saveAlert').classList.remove('show');
+
+  if (!currentPatient) {
+    showAlert('saveAlert', '請先查詢病人');
+    return;
+  }
+
+  $('saveBtn').disabled = true;
+  $('saveBtn').innerHTML = '<span class="loading"></span>儲存中…';
+
+  const formData = new FormData($('recordForm'));
+  formData.append('action', 'savePostop');
+  formData.append('pk', currentPatient.pk);
+  formData.append('key', $('doctor_key').value.trim());
+
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData,
+    });
+
+    $('mainForm').style.display = 'none';
+    $('successScreen').classList.add('show');
+    $('step2Indicator').classList.remove('active');
+    $('step2Indicator').classList.add('done');
+    $('step3Indicator').classList.add('active');
+    $('successMsg').textContent = isUpdate
+      ? `已更新 ${currentPatient.name} 的紀錄。`
+      : `已建立 ${currentPatient.name} 的術後追蹤紀錄。`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch (err) {
+    showAlert('saveAlert', '儲存失敗：' + err.message);
+    $('saveBtn').disabled = false;
+    $('saveBtn').textContent = '儲存全部';
+  }
+});
+
+// ========== Success actions ==========
+$('continueBtn').addEventListener('click', () => {
+  // Re-fetch and continue editing same patient
+  $('successScreen').classList.remove('show');
+  $('mainForm').style.display = 'block';
+  $('saveBtn').disabled = false;
+  $('saveBtn').textContent = '儲存全部';
+  $('step3Indicator').classList.remove('active');
+  $('step2Indicator').classList.add('active');
+  $('step2Indicator').classList.remove('done');
+  // Re-lookup to get fresh data
+  if (currentPatient) {
+    const pk = currentPatient.pk;
+    const key = $('doctor_key').value.trim();
+    jsonp(APPS_SCRIPT_URL, { action: 'lookupPostop', pk, key })
+      .then(res => { if (res.found) { currentPatient = res; fillExisting(res); } });
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+$('anotherBtn').addEventListener('click', () => {
+  resetAll();
+  $('successScreen').classList.remove('show');
+  $('mainForm').style.display = 'block';
+  $('saveBtn').disabled = false;
+  $('saveBtn').textContent = '儲存全部';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => $('lookup_birthdate').focus(), 300);
+});
+
+$('finishBtn').addEventListener('click', () => {
+  window.close();
+  setTimeout(() => {
+    document.body.innerHTML = '<div style="text-align:center;padding:80px 20px;font-family:sans-serif;color:#5C5C5C">您可關閉此頁面</div>';
+  }, 200);
+});
+
+// ========== Clear error on input ==========
+document.addEventListener('input', (e) => {
+  const f = e.target.closest('.field');
+  if (f && f.classList.contains('has-error')) f.classList.remove('has-error');
+});
+
+// Auto-focus on load
+window.addEventListener('load', () => {
+  if ($('doctor_key').value) $('lookup_birthdate').focus();
+  else $('doctor_key').focus();
+});
+</script>
+</body>
+</html>
