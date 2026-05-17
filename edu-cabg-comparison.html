@@ -247,6 +247,115 @@ h1 {
   line-height: 1.85;
 }
 
+/* ============ Highway Metaphor Box ============ */
+.metaphor {
+  background: var(--cream);
+  border: 1px dashed var(--gold);
+  border-radius: 4px;
+  padding: 14px 18px;
+  margin: 0 0 18px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.metaphor .road-icon {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  color: var(--gold);
+  font-family: 'Noto Serif TC', serif;
+  font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  letter-spacing: 0;
+}
+.metaphor .road-text {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+.metaphor .road-text strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.method-card.highlight .metaphor {
+  background: var(--paper);
+  border-color: var(--gold);
+  border-style: solid;
+}
+
+/* ============ Highway Metaphor Intro ============ */
+.metaphor-intro {
+  background: linear-gradient(180deg, #FFFFFF 0%, var(--highlight-bg) 100%);
+  border: 1px solid var(--highlight-border);
+  border-radius: 4px;
+  padding: 22px 26px;
+  margin-bottom: 24px;
+}
+.metaphor-intro h4 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.metaphor-intro p {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.85;
+}
+
+/* ============ Q&A Section ============ */
+.qa-list {
+  margin-bottom: 24px;
+}
+.qa-item {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 22px 24px;
+  margin-bottom: 12px;
+}
+.qa-item .q {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--teal);
+  margin-bottom: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.qa-item .q::before {
+  content: 'Q';
+  flex-shrink: 0;
+  color: var(--gold);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+}
+.qa-item .a {
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  line-height: 1.8;
+  padding-left: 22px;
+  position: relative;
+}
+.qa-item .a::before {
+  content: 'A';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--ink-faint);
+  font-family: 'Noto Serif TC', serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+.qa-item .a strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
 /* ============ Pros / Cons lists ============ */
 .pro-con {
   display: grid;
@@ -547,12 +656,17 @@ footer .clinic {
   <!-- Lead -->
   <div class="lead">
     <strong>什麼是冠狀動脈繞道手術？</strong>
-    <p>當心臟的冠狀動脈嚴重阻塞、藥物或氣球擴張（支架）難以處理時，心臟外科醫師會從你身上取一段健康的血管（例如左胸內動脈、橈動脈或大腿隱靜脈），<strong style="display:inline;font-family:inherit;color:var(--teal)">繞過阻塞的路段</strong>，重新讓血液回流到心肌。就像在塞車的高速公路旁，另闢一條新的通行道路。</p>
-    <p>依照「手術時心臟是否跳動」與「是否使用體外循環機」，目前有三種主要做法。本院主要採用 <strong style="display:inline;font-family:inherit;color:var(--teal)">體外循環支援、心臟跳動下繞道（On-pump Beating CABG）</strong>，以下為三者比較。</p>
+    <p>當心臟的冠狀動脈嚴重阻塞、藥物或氣球擴張（支架）難以處理時，心臟外科醫師會從你身上取一段健康的血管（例如左胸內動脈、<strong style="display:inline;font-family:inherit;color:var(--teal)">手腕的動脈（橈動脈）</strong>或<strong style="display:inline;font-family:inherit;color:var(--teal)">大腿內側的靜脈（隱靜脈）</strong>），<strong style="display:inline;font-family:inherit;color:var(--teal)">繞過阻塞的路段</strong>，重新讓血液回流到心肌。就像在塞車的高速公路旁，另闢一條新的通行道路。</p>
+    <p>依照「手術時心臟是否跳動」與「是否使用體外循環機（<strong style="display:inline;font-family:inherit;color:var(--teal)">一種暫時幫忙心臟和肺臟工作的機器</strong>）」，目前有三種主要做法。本院主要採用 <strong style="display:inline;font-family:inherit;color:var(--teal)">體外循環支援、心臟跳動下繞道（On-pump Beating CABG）</strong>，以下為三者比較。</p>
   </div>
 
   <!-- Section: 三種術式 -->
   <div class="section-title">三種術式如何進行</div>
+
+  <div class="metaphor-intro">
+    <h4>延續「高速公路」的比喻 ——</h4>
+    <p>三種術式的差別，就像是<strong style="color:var(--ink);font-weight:600">在同一條塞車的高速公路旁修建新的通行道路</strong>時，「車流」與「路面」的處理方式不一樣。以下用這個比喻幫你快速理解。</p>
+  </div>
 
   <!-- Method 1: OPCAB -->
   <article class="method-card">
@@ -578,11 +692,16 @@ footer .clinic {
 
     <p class="method-desc">直接在跳動的心臟上縫合繞道血管。醫師使用特殊的固定器，將要縫合的小段血管局部穩住，其他部分仍維持跳動。整台手術不使用體外循環機。</p>
 
+    <div class="metaphor">
+      <div class="road-icon">①</div>
+      <div class="road-text"><strong>邊開車、邊修路</strong>：車流沒停，工人直接在動的路面上施工。施工難度最高，且車多時不適合處理高速公路的內側車道（心臟背面的血管）。</div>
+    </div>
+
     <div class="pro-con">
       <div class="pro-con-block pros">
         <div class="heading">優點</div>
         <ul>
-          <li>避免體外循環引起的全身炎症反應</li>
+          <li>避免體外循環造成的廣泛發炎反應（身體像被刺激後產生的全身性發炎）</li>
           <li>輸血需求較少</li>
           <li>對腎臟、神經系統影響較小</li>
         </ul>
@@ -591,8 +710,8 @@ footer .clinic {
         <div class="heading">限制</div>
         <ul>
           <li>手術技術門檻最高</li>
-          <li>心臟後壁血管不易處理</li>
-          <li>長期血管通暢率可能稍低</li>
+          <li>心臟背面的血管不易處理</li>
+          <li>長期血管暢通率可能稍低</li>
         </ul>
       </div>
     </div>
@@ -625,16 +744,21 @@ footer .clinic {
       </div>
     </div>
 
-    <p class="method-desc">由體外循環機協助分擔心臟與肺臟的工作，但<strong style="font-weight:600;color:var(--ink)">心臟仍持續跳動、持續有血流灌注</strong>。心臟工作量大幅減輕，血壓穩定，醫師可在精細的環境下完成繞道縫合，同時心肌不會缺血。</p>
+    <p class="method-desc">由體外循環機協助分擔心臟與肺臟的工作，但<strong style="font-weight:600;color:var(--ink)">心臟仍持續跳動、持續有血流灌注</strong>。心臟工作量大幅減輕，血壓穩定，醫師可在精細的環境下完成繞道縫合，同時心臟肌肉不會缺血。</p>
+
+    <div class="metaphor">
+      <div class="road-icon">②</div>
+      <div class="road-text"><strong>路面通車、機器分擔車流</strong>：請拖吊車從旁協助分擔部分車流（體外循環機分擔心肺工作），但路面的車子仍持續通行（心臟仍跳動、血流不中斷）。<strong>路面穩定、車流也沒停，是兼顧施工精度與安全的做法</strong>。</div>
+    </div>
 
     <div class="pro-con">
       <div class="pro-con-block pros">
         <div class="heading">優點</div>
         <ul>
-          <li>心肌持續灌注，無缺血再灌注損傷</li>
-          <li>適合心臟功能較差（低 LVEF）病人</li>
-          <li>血壓動力學穩定，手術視野穩定</li>
-          <li>術後低心輸出症候群發生率較低</li>
+          <li>心臟肌肉持續有血流供應，避免「斷血後再重新通血」造成的傷害</li>
+          <li>適合心臟功能較差（一次能打出去的血量比較少）的病人</li>
+          <li>血壓穩定，手術視野穩定</li>
+          <li>術後「心臟打出的血量不夠」的狀況較少發生</li>
         </ul>
       </div>
       <div class="pro-con-block cons">
@@ -673,7 +797,12 @@ footer .clinic {
       </div>
     </div>
 
-    <p class="method-desc">使用體外循環機接管心肺工作後，灌注含鉀的「心臟麻痺液（Cardioplegia）」讓心臟<strong style="font-weight:600;color:var(--ink)">完全停止跳動</strong>。醫師在靜止的心臟上完成繞道縫合，手術結束後再讓心臟復跳。這是過去數十年的標準做法。</p>
+    <p class="method-desc">使用體外循環機接管心肺工作後，灌注<strong style="font-weight:600;color:var(--ink)">一種讓心臟暫時停止跳動的特殊藥水（Cardioplegia）</strong>，讓心臟<strong style="font-weight:600;color:var(--ink)">完全停止跳動</strong>。醫師在靜止的心臟上完成繞道縫合，手術結束後再讓心臟復跳。這是過去數十年的標準做法。</p>
+
+    <div class="metaphor">
+      <div class="road-icon">③</div>
+      <div class="road-text"><strong>整段封路、車流改道</strong>：所有車輛先改走別條路（體外循環機完全接管心肺），原路面靜止施工（心臟完全停跳）。<strong>最容易施工，但結束後要重新讓車流回到原路面（心臟復跳）</strong>，這個重新通車的過程對心臟是一個壓力。</div>
+    </div>
 
     <div class="pro-con">
       <div class="pro-con-block pros">
@@ -687,8 +816,8 @@ footer .clinic {
       <div class="pro-con-block cons">
         <div class="heading">限制</div>
         <ul>
-          <li>心臟經歷停跳—復跳的過程</li>
-          <li>缺血再灌注損傷風險較高</li>
+          <li>心臟要經歷「停跳→復跳」的過程</li>
+          <li>心臟有「斷血後再重新通血」造成的傷害風險較高</li>
           <li>體外循環時間相對較長</li>
         </ul>
       </div>
@@ -722,22 +851,22 @@ footer .clinic {
           <td>使用（接管）</td>
         </tr>
         <tr>
-          <th>心肌灌注</th>
+          <th>心臟肌肉<br>是否持續供血</th>
           <td>持續</td>
           <td class="featured">持續</td>
           <td>暫停</td>
         </tr>
         <tr>
-          <th>血壓穩定度</th>
+          <th>血壓是否穩定</th>
           <td>較不穩定</td>
           <td class="featured">穩定</td>
           <td>穩定</td>
         </tr>
         <tr>
-          <th>適合心功能差<br>的病人</th>
-          <td>較不適合</td>
-          <td class="featured">最適合</td>
-          <td>可</td>
+          <th>適合心臟功能<br>較差的病人</th>
+          <td>不建議</td>
+          <td class="featured">最佳選擇</td>
+          <td>也可以</td>
         </tr>
         <tr>
           <th>手術技術門檻</th>
@@ -754,31 +883,52 @@ footer .clinic {
 
   <div class="why-box">
     <h3>結合兩種術式的優勢</h3>
-    <div class="why-sub">兼顧心肌保護與手術精度的最佳平衡</div>
+    <div class="why-sub">兼顧心臟保護與手術精度的最佳平衡</div>
 
     <ul class="why-list">
       <li>
-        <span class="lead-text">心肌保護最完整</span>
-        <span class="detail-text">心臟在整個手術過程中持續跳動、持續有血流灌注，避免「停跳—復跳」造成的缺血再灌注損傷。</span>
+        <span class="lead-text">心臟保護最完整</span>
+        <span class="detail-text">心臟在整個手術過程中持續跳動、持續有血流供應，避免「斷血後再重新通血」造成的傷害。</span>
       </li>
       <li>
-        <span class="lead-text">血液動力學穩定</span>
+        <span class="lead-text">血壓穩定</span>
         <span class="detail-text">體外循環機協助分擔工作，血壓變動小，手術視野穩定，繞道血管縫合更精準。</span>
       </li>
       <li>
-        <span class="lead-text">適合心功能較差的病人</span>
-        <span class="detail-text">對於左心室射出率（LVEF）較低、或合併多條血管病變的病人，能提供最安全的支援。</span>
+        <span class="lead-text">適合心臟功能較差的病人</span>
+        <span class="detail-text">對於心臟一次能打出去的血量比較少、或同時有多條血管阻塞的病人，能提供最安全的支援。</span>
       </li>
       <li>
         <span class="lead-text">術後恢復更順利</span>
-        <span class="detail-text">術後低心輸出症候群發生率較低，加護病房停留時間較短，符合加速康復目標。</span>
+        <span class="detail-text">術後「心臟打出的血量不夠」的狀況較少發生，加護病房停留時間較短，符合加速康復目標。</span>
       </li>
     </ul>
   </div>
 
+  <!-- Q&A Section -->
+  <div class="section-title">病人常問的三個問題</div>
+
+  <div class="qa-list">
+    <div class="qa-item">
+      <div class="q">這個做法住院會比較久還是比較短？</div>
+      <div class="a">與「停跳」做法相比，本院採用的「<strong>心臟跳動下繞道</strong>」術後恢復通常較順利，<strong>加護病房停留時間較短、整體住院天數通常與傳統手術相近或更短</strong>。實際時程仍依個別恢復狀況而定。</div>
+    </div>
+
+    <div class="qa-item">
+      <div class="q">這個做法會比較貴嗎？健保有給付嗎？</div>
+      <div class="a">三種繞道手術的核心費用（手術、麻醉、住院、藥品等）<strong>全部都在健保給付範圍內</strong>。差別主要在某些特殊耗材或自費項目（如部分人工血管、止血材料），醫師會在手術同意書中詳細說明，由你選擇。</div>
+    </div>
+
+    <div class="qa-item">
+      <div class="q">我會比較容易出問題嗎？</div>
+      <div class="a">不會。研究顯示，<strong>「心臟跳動下繞道」並沒有增加併發症的風險</strong>，反而在心臟保護、輸血需求、術後恢復速度上有相對優勢，特別對心臟功能較差的病人尤其明顯。本院執行此術式已累積相當經驗，團隊配合熟練。</div>
+    </div>
+  </div>
+
   <!-- Closing -->
   <div class="closing">
-    <p>最終手術方式仍由你的主治醫師依據冠狀動脈病變位置、心臟功能、合併疾病等綜合評估決定。</p>
+    <p>最終手術方式仍由你的主治醫師依據冠狀動脈病變位置、心臟功能、<strong style="color:var(--teal);font-weight:500">同時有的其他疾病（例如糖尿病、腎臟病）</strong>等綜合評估決定。</p>
+    <p><strong style="color:var(--teal);font-weight:500">不論最後採用哪一種，都是經過完整評估、為你量身選擇的做法。</strong></p>
     <p>對手術方式有任何疑問，歡迎在<strong style="color:var(--teal);font-weight:500">門診</strong>或<strong style="color:var(--teal);font-weight:500">術前訪視</strong>時與心臟外科醫師、麻醉科醫師討論。</p>
     <div class="signature">心臟加速康復團隊 · 與你同莘</div>
     <div class="signature-note">同莘 — 同心 · 耕莘</div>
