@@ -159,6 +159,12 @@ h1 {
 /* ────────────────────────────────────────────
    5. Lead paragraph (鴨綠色提示框)
    每篇衛教第一段「為什麼讀這篇」用
+
+   結構:
+     <div class="lead">
+       <strong>為什麼這篇重要</strong>     ← 區塊標題(block,直接子元素)
+       <p>內文,可包 <strong>內文重點</strong> ← inline 強調</p>
+     </div>
    ──────────────────────────────────────────── */
 .lead {
   background: var(--teal-tint);
@@ -171,13 +177,19 @@ h1 {
   color: var(--ink-soft);
   line-height: 1.85;
 }
-.lead strong {
+/* 直接子元素的 strong:區塊標題 */
+.lead > strong {
   color: var(--teal);
   font-family: var(--font-serif);
   font-weight: 600;
   display: block;
   margin-bottom: 8px;
   font-size: 16px;
+}
+/* p 內的 strong:inline 強調 */
+.lead p strong {
+  color: var(--teal);
+  font-weight: 600;
 }
 .lead p + p { margin-top: 12px; }
 .lead .inline-em {
@@ -343,34 +355,167 @@ td { color: var(--ink-soft); }
 
 
 /* ────────────────────────────────────────────
-   12. Footer
-   每篇結尾的署名:「心臟加速康復團隊 · 與你同莘」
+   12. Step card (編號步驟卡)
+   用於 step-by-step 流程說明
+   結構:
+     <article class="step-card">
+       <div class="step-num">01</div>
+       <div class="step-body">
+         <h4>步驟標題</h4>
+         <p>步驟內文</p>
+       </div>
+     </article>
    ──────────────────────────────────────────── */
-.edu-footer {
-  margin: 64px auto 0;
-  padding-top: 28px;
-  border-top: 1px solid var(--border);
-  text-align: center;
-  font-size: 13px;
-  color: var(--ink-faint);
-  line-height: 1.8;
+.step-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  margin-bottom: 14px;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
 }
-.edu-footer .signature {
+.step-num {
   font-family: var(--font-serif);
-  font-size: 14px;
-  color: var(--teal);
-  font-weight: 500;
-  margin-bottom: 6px;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--gold);
+  flex-shrink: 0;
+  width: 34px;
+  text-align: center;
+  line-height: 1.2;
+  padding-top: 2px;
 }
-.edu-footer .meta {
-  font-size: 11.5px;
-  letter-spacing: 0.05em;
-  color: var(--ink-faint);
+.step-body { flex: 1; }
+.step-body h4 {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+.step-body p {
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  line-height: 1.8;
+  margin-bottom: 0;
 }
 
 
 /* ────────────────────────────────────────────
-   13. 列印樣式(讓 PDF / 病房牆貼版面好看)
+   13. Closing (本篇結尾段落 + 署名)
+   每篇結尾的「給病人的話 + 心臟加速康復團隊 · 與你同莘」
+   ──────────────────────────────────────────── */
+.closing {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 26px 28px;
+  margin-top: 32px;
+  text-align: center;
+}
+.closing p {
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  line-height: 1.85;
+  margin-bottom: 0;
+}
+.closing p + p { margin-top: 10px; }
+.closing .signature {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.closing .signature-note {
+  font-size: 9px;
+  color: var(--gold);
+  letter-spacing: 0.25em;
+  margin-top: 6px;
+  opacity: 0.7;
+  font-weight: 400;
+  font-family: var(--font-sans);
+}
+
+
+/* ────────────────────────────────────────────
+   14. References (參考文獻列表)
+   ──────────────────────────────────────────── */
+.references {
+  margin-top: 32px;
+  padding: 22px 24px;
+  background: transparent;
+  border-top: 1px solid var(--border);
+}
+.references .ref-title {
+  font-family: var(--font-serif);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.references ol {
+  list-style: none;
+  padding: 0;
+  counter-reset: ref;
+}
+.references ol li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 10px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  counter-increment: ref;
+}
+.references ol li::before {
+  content: counter(ref);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-serif);
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 600;
+}
+.references em {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+
+/* ────────────────────────────────────────────
+   15. Footer (頁腳:院方資訊)
+   結尾的小字院方標示
+   ──────────────────────────────────────────── */
+footer.edu-footer,
+.edu-footer {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--ink-faint);
+  line-height: 1.8;
+}
+.edu-footer .clinic {
+  font-family: var(--font-serif);
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+
+/* ────────────────────────────────────────────
+   16. 列印樣式(讓 PDF / 病房牆貼版面好看)
    ──────────────────────────────────────────── */
 @media print {
   body {
@@ -394,7 +539,9 @@ td { color: var(--ink-soft); }
   .card,
   .callout,
   .figure,
-  .lead {
+  .lead,
+  .step-card,
+  .closing {
     page-break-inside: avoid;
   }
   .section-title {
@@ -404,7 +551,7 @@ td { color: var(--ink-soft); }
 
 
 /* ────────────────────────────────────────────
-   14. 小螢幕微調
+   17. 小螢幕微調
    ──────────────────────────────────────────── */
 @media (max-width: 480px) {
   body { padding: 16px 12px 60px; }
@@ -413,6 +560,9 @@ td { color: var(--ink-soft); }
   .section-title { font-size: 17px; margin: 36px 0 16px; }
   .card { padding: 18px 18px; }
   .callout { padding: 20px 20px; }
+  .step-card { padding: 18px 18px; gap: 14px; }
+  .step-num { font-size: 20px; width: 28px; }
+  .closing { padding: 22px 22px; }
   table { font-size: 13.5px; }
   th, td { padding: 10px 10px; }
 }
