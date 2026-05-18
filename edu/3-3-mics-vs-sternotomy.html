@@ -179,6 +179,66 @@
 }
 .robotic-mention p strong { color: var(--ink); font-weight: 600; }
 
+/* 疼痛時間軸對照 */
+.pain-timeline {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--teal);
+  border-radius: 3px;
+  padding: 22px 26px;
+  margin-bottom: 24px;
+}
+.pain-timeline h4 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--teal);
+  margin-bottom: 4px;
+}
+.pain-timeline .sub {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  margin-bottom: 14px;
+}
+.pain-timeline .phase {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border);
+  align-items: flex-start;
+}
+.pain-timeline .phase:last-child { border-bottom: none; }
+.pain-timeline .phase-when {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 600;
+  color: var(--teal);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.pain-timeline .phase-what {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+}
+.pain-timeline .phase-what strong { color: var(--ink); font-weight: 600; }
+.pain-timeline .summary {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--teal-tint);
+  border-radius: 3px;
+  border-left: 2px solid var(--teal);
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.75;
+}
+.pain-timeline .summary strong { color: var(--teal); font-weight: 600; }
+
+@media (max-width: 480px) {
+  .pain-timeline { padding: 18px 20px; }
+  .pain-timeline .phase { grid-template-columns: 1fr; gap: 4px; }
+}
+
 /* 恢復對照表 — floating-label */
 .recovery-compare {
   background: var(--paper);
@@ -573,7 +633,10 @@
   <!-- Robotic mention -->
   <div class="robotic-mention">
     <h4>關於「機器手臂輔助心臟手術」</h4>
-    <p>機器手臂輔助(如<strong>達文西系統</strong>)是<strong>更精細的微創手術</strong>,醫師透過機器手臂從幾個小孔進入胸腔操作,切口可更小(每孔 1–2 cm)。<strong>本院目前主要應用於特定瓣膜手術評估中,屬於自費項目</strong>(金額請術前訪視時詢問)。適合符合微創條件 + 對切口更小有強烈需求 + 能負擔自費部分的病人。</p>
+    <p>機器手臂輔助(如<strong>達文西系統</strong>,da Vinci,目前最知名的機器手臂手術系統)是更精細的微創手術型式,醫師透過機器手臂從幾個小孔進入胸腔操作,切口可更小(每孔 1–2 cm),目前國際上以特定瓣膜手術(尤其二尖瓣)應用較成熟。</p>
+    <p><strong>本院目前尚未開展機器手臂心臟手術</strong>,團隊正在積極評估與籌備中。本院遵循「<strong>確認對病人有實質益處才開展</strong>」的原則,未來若正式開展,會在門診與術前訪視時主動告知。</p>
+    <p>目前若您強烈希望接受機器手臂手術,建議在<strong>門診時直接與醫師討論</strong>,團隊會根據您的病灶與整體狀況,協助您評估是否合適、並可協助轉介至有經驗的醫療團隊。</p>
+    <p><strong style="color:var(--gold)">重要提醒</strong>:機器手臂手術的「<strong>切口更小</strong>」優勢,在實際恢復速度上的差異<strong>不如想像中明顯</strong> —— 本院的傳統微創手術(微創 A、B、C)在整套 ERAS 策略下,恢復速度已能達到相當高的水準。<strong>「切口最小」不等於「恢復最快」</strong> —— 這需要綜合評估。</p>
   </div>
 
   <!-- Recovery comparison -->
@@ -599,7 +662,7 @@
       <div class="mics">4–10 cm</div>
     </div>
     <div class="rc-row">
-      <div class="metric">手術時間<span class="sub-metric">微創通常較長</span></div>
+      <div class="metric">手術時間<span class="sub-metric">微創通常較長(主要影響麻醉、體外循環時間;不直接影響恢復速度)</span></div>
       <div class="trad">標準</div>
       <div class="mics">+30–60 分</div>
     </div>
@@ -678,7 +741,7 @@
       <ul>
         <li><strong>單純病變</strong>(單一瓣膜、單支冠狀動脈)</li>
         <li>選擇性手術(非緊急)</li>
-        <li><strong>體型不過度肥胖</strong>(通常 BMI &lt; 35)</li>
+        <li><strong>體型不過度肥胖</strong>(通常 BMI &lt; 35,例如身高 170 cm 體重 &lt; 101 kg)</li>
         <li>心臟功能尚可</li>
         <li>無嚴重肺部疾病</li>
         <li>無嚴重周邊血管疾病</li>
@@ -692,7 +755,7 @@
         <li><strong>複雜病變</strong>(多瓣膜、多條血管同時阻塞)</li>
         <li>緊急、急救性手術</li>
         <li>重做心臟手術且預期沾黏嚴重</li>
-        <li><strong>嚴重肥胖</strong>(BMI &gt; 35,影響微創視野)</li>
+        <li><strong>嚴重肥胖</strong>(BMI &gt; 35,例如身高 170 cm 體重 &gt; 101 kg,影響微創視野)</li>
         <li>嚴重慢性阻塞性肺病、需單肺通氣困難</li>
         <li>嚴重周邊血管疾病</li>
         <li>嚴重低心臟功能、需完整顯露</li>
@@ -734,12 +797,42 @@
     <ul>
       <li><strong>手術時間較長</strong>:因為視野受限、操作空間較小,通常比傳統手術多 30–60 分鐘</li>
       <li><strong>體外循環時間較長</strong>:間接增加術中血液稀釋、輸血需求等</li>
-      <li><strong>急性期疼痛可能相近</strong>:肋骨間切口會牽動肋間神經,初期疼痛可能與傳統相近</li>
+      <li><strong>急性期疼痛可能相近</strong>:微創切口雖小,但<strong>從肋骨之間進入會牽動肋骨間的神經(肋間神經)</strong>,初期疼痛可能與傳統相近,<strong>主要差距在「住院後的恢復」</strong>(詳見下方時間軸)</li>
       <li><strong>需要選擇性病例</strong>:不是每個病人都適合,醫師會嚴格評估</li>
       <li><strong>技術門檻較高</strong>:需要受過微創訓練的團隊,且需要特殊器械</li>
       <li><strong>視野有限</strong>:手術中如果發現問題,有時需要中途轉開傳統</li>
-      <li><strong>部分自費</strong>:依使用的特殊器械、機器手臂等,可能有部分自費</li>
+      <li><strong>部分自費</strong>:依使用的特殊器械(部分人工血管、止血材料、特定縫合器等),可能有部分自費</li>
     </ul>
+  </div>
+
+  <!-- Pain timeline -->
+  <div class="pain-timeline">
+    <h4>疼痛的時間軸對照</h4>
+    <div class="sub">微創與傳統開胸在不同階段的疼痛差異</div>
+
+    <div class="phase">
+      <div class="phase-when">住院第 1–3 天</div>
+      <div class="phase-what">微創與傳統的疼痛強度<strong>相近</strong>。因為微創的肋骨間切口會牽動<strong>肋間神經</strong>,初期反而可能更敏感。本院多模式止痛 <span class="link-ref">連結 5-1</span> 對兩種術式都有效。</div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-when">住院第 4–7 天</div>
+      <div class="phase-what">微創病人的疼痛<strong>開始明顯下降</strong>,可逐步減少口服止痛藥。傳統開胸仍在抱枕保護期,起身、咳嗽都需要抱枕協助。</div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-when">出院後 2–4 週</div>
+      <div class="phase-what">微創病人能恢復<strong>多數日常活動</strong>(開車、提輕物、伏案工作)。傳統開胸仍受<strong>胸骨保護期限制</strong>(避免提重物、單手支撐起身、伸手摘高處)。</div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-when">出院後 6–8 週</div>
+      <div class="phase-what">傳統開胸進入<strong>胸骨癒合完成期</strong>,可逐步解除活動限制 <span class="link-ref">連結 7-4</span>。兩者差距<strong>大幅縮小</strong>,長期生活功能無明顯差異。</div>
+    </div>
+
+    <div class="summary">
+      <strong>結論:</strong>急性期(住院前 3 天)兩者疼痛強度相當;<strong>真正的差距在「住院後 4 週的活動恢復速度」</strong>。如果您工作或生活上需要早期回到日常活動,微創的優勢會更明顯;如果您能接受 6–8 週的循序恢復,傳統開胸搭配本院 ERAS 同樣能達到很好的結果。
+    </div>
   </div>
 
   <!-- Conversion note -->
@@ -766,7 +859,7 @@
     <ul>
       <li><strong>以我的狀況、病灶位置,微創適合我嗎?</strong>哪一種微創切口?</li>
       <li><strong>如果適合,預期恢復時程比傳統能快多少?</strong></li>
-      <li><strong>需要自費的部分?</strong>哪些器械、機器手臂、是否健保給付?</li>
+      <li><strong>需要自費的部分?</strong>哪些器械、耗材是否健保給付?哪些是自費項目?</li>
       <li><strong>中途轉開傳統的機率?</strong>本院的轉開率?</li>
       <li><strong>本院做過多少例微創?</strong>術者的微創經驗如何?</li>
       <li><strong>如果選擇傳統,本院的 ERAS 策略能讓我恢復多快?</strong></li>
@@ -778,15 +871,18 @@
   <!-- Reading map -->
   <div class="reading-map">
     <h4>手術方式相關的閱讀路徑</h4>
-    <div class="sub">這份單張在整套衛教中的位置</div>
+    <div class="sub">這份單張在整套衛教中的位置 — 從「選擇手術方式」到「術後恢復鏈」的完整路徑</div>
     <ol>
-      <li>三種冠狀動脈繞道手術比較(CABG 類型)</li>
-      <li>體外循環機 CPB(手術原理)</li>
-      <li>胸骨固定方式(鋼絲 vs 鋼板)</li>
-      <li>胸骨保護(術後 6–8 週,微創者可能可縮短)</li>
-      <li class="current"><strong>微創 vs 傳統開胸(您正在讀)</strong></li>
-      <li>術後咳嗽與咳痰(連結到切口疼痛)</li>
-      <li>從躺到坐 · 從站到走(恢復鏈)</li>
+      <li>三種冠狀動脈繞道手術比較 3-1(CABG 類型選擇)</li>
+      <li>體外循環機 CPB 3-2(手術原理 — 不論微創或傳統都會用到)</li>
+      <li class="current"><strong>微創 vs 傳統開胸 3-3(您正在讀)</strong></li>
+      <li>胸骨固定方式 3-4(鋼絲 vs 鋼板,本篇 BMI bridge 連動)</li>
+      <li>術中多模式止痛 5-1(本篇疼痛時間軸的止痛策略基礎)</li>
+      <li>凝血功能與止血藥物 5-2(微創出血量少 50% 的背景)</li>
+      <li>早期拔管 6-2(本院兩種術式皆手術室內拔管)</li>
+      <li>術後咳嗽技巧 7-2(切口疼痛影響咳嗽方式)</li>
+      <li>胸骨保護動作 7-4(傳統 6–8 週、微創可縮短)</li>
+      <li>從躺到坐 7-6a、從站到走 7-6b(術後活動恢復鏈)</li>
     </ol>
   </div>
 
