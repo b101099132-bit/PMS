@@ -212,6 +212,70 @@
 }
 .value-table .closing-em strong { color: var(--ink); font-weight: 600; }
 
+/* 預防 vs 治療 成本對比(在 value-table 內) */
+.value-table .cost-compare {
+  margin-top: 14px;
+  background: var(--cream-deep);
+  border-radius: 4px;
+  padding: 16px 18px;
+}
+.value-table .cost-compare .cc-label {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.value-table .cost-compare .cc-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 3px;
+}
+.value-table .cost-compare .cc-row.prevent {
+  background: var(--safe-bg);
+  border-left: 3px solid var(--safe);
+}
+.value-table .cost-compare .cc-row.treat {
+  background: var(--danger-bg);
+  border-left: 3px solid var(--danger);
+}
+.value-table .cost-compare .cc-icon {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 20px;
+  font-weight: 700;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.value-table .cost-compare .cc-row.prevent .cc-icon { color: var(--safe); }
+.value-table .cost-compare .cc-row.treat .cc-icon { color: var(--danger); }
+.value-table .cost-compare .cc-body { flex: 1; }
+.value-table .cost-compare .cc-title {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.value-table .cost-compare .cc-amount {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+.value-table .cost-compare .cc-amount strong { color: var(--ink); font-weight: 600; }
+.value-table .cost-compare .cc-arrow {
+  text-align: center;
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.15em;
+  margin: 6px 0;
+  font-family: 'Noto Serif TC', serif;
+}
+
 /* 風險族群分組 */
 .risk-callout {
   background: var(--paper);
@@ -417,7 +481,7 @@
   <div class="section-title">兩者的恢復時程具體比較</div>
 
   <p class="section-intro">
-    病人最關心的問題是:<span class="em">「鋼板真的能讓我比較快恢復嗎?快多少?」</span>下表整理國際大型 RCT 與本院臨床經驗的具體數字。
+    病人最關心的問題是:<span class="em">「鋼板真的能讓我比較快恢復嗎?快多少?」</span>下表整理國際大型 <strong>RCT(Randomized Controlled Trial,隨機對照試驗 —— 把病人隨機分到兩組分別用鋼板與鋼絲、公平比較結果,是醫學研究最嚴謹的方法之一)</strong>與本院臨床經驗的具體數字。
   </p>
 
   <div class="recovery-compare">
@@ -486,11 +550,31 @@
     <ul>
       <li><strong>平均住院少 1.4 天</strong> —— 約省 1–2 萬元病房自費差額(單人房、雙人房)</li>
       <li><strong>平均 ICU 少約 41 小時</strong> —— 約省 1–2 萬元 ICU 自費差額與相關照護費</li>
-      <li><strong>早 1–2 週恢復正常活動</strong> —— 對需要早回工作、有家庭照顧責任的人很有價值</li>
+      <li><strong>早 1–2 週解除嚴格限制</strong> —— 具體指提早能<strong>開車、提輕物(2–3 公斤,例如一袋蔬菜)、伸手摘高處、回辦公室文職工作、抱小幼兒(5 公斤以下)</strong>;對需要早回工作或照顧家人的人很有實質價值</li>
       <li><strong>骨癒合機率約 3 倍</strong> —— 大幅降低胸骨裂開、再開刀的風險(再開刀成本遠超過 11 萬)</li>
       <li><strong>咳嗽時不痛的機率約 2 倍</strong> —— 配合多模式止痛能更有效控制痛,敢咳痰、減少肺部併發症</li>
       <li><strong>譫妄與認知功能風險降低</strong> —— ICU 縮短近一半,降低術後認知混亂風險 <span class="link-ref">連結 8-1a</span></li>
     </ul>
+
+    <div class="cost-compare">
+      <div class="cc-label">預防成本 vs 治療成本</div>
+      <div class="cc-row prevent">
+        <div class="cc-icon">✓</div>
+        <div class="cc-body">
+          <div class="cc-title">術前選擇:鋼板固定</div>
+          <div class="cc-amount">自費約 <strong>11 萬元</strong>(術前同意書勾選即可)</div>
+        </div>
+      </div>
+      <div class="cc-arrow">↓ 若胸骨裂開,需要走另一條路 ↓</div>
+      <div class="cc-row treat">
+        <div class="cc-icon">!</div>
+        <div class="cc-body">
+          <div class="cc-title">術後治療:胸骨裂開後的再開刀</div>
+          <div class="cc-amount">約 <strong>30 萬以上</strong>(含自費耗材、再次加護病房、長期抗生素、額外住院 2–3 週、復健延長,且承擔再次手術風險)</div>
+        </div>
+      </div>
+    </div>
+
     <div class="closing-em">
       對<strong>有高風險因子的人</strong>,這 11 萬通常是「換到大幅降低胸骨裂開風險 + 加速康復」的價值。對<strong>沒有高風險因子的人</strong>,這個錢不見得划算 —— 鋼絲就足夠。
     </div>
@@ -510,8 +594,8 @@
         <div class="rg-label">代謝與身體狀況</div>
         <ul>
           <li><strong>糖尿病</strong>(特別是血糖控制不佳)</li>
-          <li><strong>肥胖</strong>(BMI &gt; 30)</li>
-          <li><strong>慢性阻塞性肺病(COPD)</strong></li>
+          <li><strong>肥胖</strong>(BMI &gt; 30,例如身高 170 cm 體重 &gt; 87 kg)</li>
+          <li><strong>慢性阻塞性肺病(COPD)</strong>(長期吸菸或空氣污染造成的肺功能下降,容易咳嗽、喘氣)</li>
           <li>慢性腎臟病</li>
         </ul>
       </div>
@@ -520,13 +604,13 @@
         <ul>
           <li><strong>骨質疏鬆</strong></li>
           <li><strong>高齡</strong>(&gt; 75 歲特別需要評估)</li>
-          <li>停經後女性</li>
+          <li>停經後女性(雌激素下降造成骨質流失加速,胸骨密度通常低於年輕女性)</li>
         </ul>
       </div>
       <div class="risk-group">
         <div class="rg-label">手術相關</div>
         <ul>
-          <li><strong>雙側乳內動脈取用</strong>(影響胸骨血流)</li>
+          <li><strong>雙側乳內動脈取用</strong>(冠狀動脈繞道時取兩側胸骨內的血管當繞道材料 —— 長期效果好,但會減少胸骨自身的血液供應,影響癒合)</li>
           <li><strong>重做心臟手術</strong></li>
           <li>手術時間預計較長</li>
         </ul>
@@ -535,7 +619,7 @@
         <div class="rg-label">用藥與生活</div>
         <ul>
           <li><strong>長期類固醇使用</strong></li>
-          <li>免疫抑制劑使用</li>
+          <li>免疫抑制劑使用(壓抑免疫反應的藥物,例如器官移植後、紅斑性狼瘡、類風濕性關節炎常用)</li>
           <li>吸菸(特別是術前未戒)</li>
           <li>預期術後咳嗽多</li>
         </ul>
@@ -560,7 +644,7 @@
       <li><strong>咳嗽更敢用力</strong> —— 胸骨夠穩,能配合抱枕、用腹部力量咳出痰 <span class="link-ref">連結 7-2</span></li>
       <li><strong>更早能坐起</strong> —— 胸骨穩定,從躺到坐時較不擔心牽動 <span class="link-ref">連結 7-6a</span></li>
       <li><strong>更早能下床走路</strong> —— 站立、走路時胸骨承受的微動少 <span class="link-ref">連結 7-6b</span></li>
-      <li><strong>抱枕保護期可能縮短</strong> —— 一般病人需要嚴格抱枕保護 6–8 週;<strong>鋼板病人可能可以縮短到 4–6 週</strong>,具體解除時間由醫師依癒合狀況評估 <span class="link-ref">連結 7-4</span></li>
+      <li><strong>抱枕保護期可能縮短</strong> —— 一般病人需要嚴格抱枕保護 6–8 週;<strong>鋼板病人可能可以縮短到 4–6 週</strong>。「早 1–2 週解除限制」具體是指<strong>提早能開車、提輕物(2–3 公斤,例如一袋蔬菜、一個公事包)、伸手摘高處、回到辦公室文職工作、抱小幼兒(5 公斤以下)</strong>等日常活動,對需要早回工作或照顧家人的病人很有實質意義。具體解除時間由醫師依癒合狀況評估 <span class="link-ref">連結 7-4</span></li>
       <li><strong>住院天數可能縮短</strong> —— 早期活動加速、併發症減少,平均住院天數通常縮短 1–2 天</li>
       <li><strong>譫妄與認知風險降低</strong> —— ICU 停留時間縮短近一半 <span class="link-ref">連結 8-1a</span></li>
       <li><strong>胸骨感染率降低</strong> —— 微動是傷口感染的危險因子之一,剛性固定能降低</li>
@@ -574,7 +658,7 @@
     <h4>不是「越貴越好」 —— 鋼板固定也有需要考慮的事</h4>
     <ul>
       <li><strong>自費部分</strong>:本院的鋼板固定屬於健保不給付項目,<strong>自費約 11 萬元</strong>(實際金額依使用片數略有差異)</li>
-      <li><strong>機場安檢可能會響</strong>:金屬探測器有時偵測得到,本院會給您一張「植入物識別卡」,過安檢時出示即可</li>
+      <li><strong>機場安檢可能會響</strong>:鈦合金鋼板大約有 <strong>30–50% 的機率被金屬探測器偵測到</strong>(依鋼板大小與探測器靈敏度而定)。本院會給您一張<strong>植入物識別卡(中英雙語)</strong>,過安檢時主動出示,海關人員會引導到旁邊用手持探測器簡單複查,<strong>通常 1–2 分鐘內完成,不會被沒收、不影響搭機</strong>。建議識別卡放在護照夾內隨身攜帶</li>
       <li><strong>未來 MRI 相容性</strong>(看大腦、脊椎時會用到的儀器):本院使用的鈦合金鋼板都是 <strong>MRI 相容</strong>的,術後會給您產品說明書留存</li>
       <li><strong>通常不需要移除</strong>:與牙科植體類似,永久留在體內。極少數情況(感染、不適)才需要取出</li>
       <li><strong>沒這些因子的病人不見得划算</strong>:低風險族群用鋼絲就足夠,不需要多花 11 萬</li>
