@@ -21,16 +21,20 @@
  *  - Session ID 串連同一次連續瀏覽的多個單張
  *  - 失敗完全靜默,不影響閱讀
  *
+ *  傳輸機制:
+ *  - 用 navigator.sendBeacon (POST) 送到 Apps Script doPost
+ *  - doPost 內 action === 'pageview' → 呼叫 handlePageView
+ *  - sendBeacon 是專為「離開頁面送資料」設計的瀏覽器原生 API
+ *
  *  部署:
  *  1. 把此檔放在 /edu/pageview.js
- *  2. 修改下方 APPS_SCRIPT_URL 為你的實際 Web App URL
- *  3. 每份 /edu/*.html 末尾(</body> 前)加:
+ *  2. 每份 /edu/*.html 末尾(</body> 前)加:
  *       <script src="pageview.js" defer></script>
+ *  3. ⚠️ Apps Script 必須:doPost 內加 action === 'pageview' 路由
  *
  *  隱私:
  *  - 不記錄病人姓名、身分證、病歷號
  *  - 只記錄內部 pk + LINE userId(若同意推播即已同意)
- *  - UA / Referrer 為標準 Web 統計欄位
  * ============================================================
  */
 
@@ -88,33 +92,35 @@
   // ============================================================
   function sendPageView(duration) {
     try {
-      const qs = [
-        'action=pageview',
-        'code=' + encodeURIComponent(code),
-        'file=' + encodeURIComponent(filename),
-        'pk=' + encodeURIComponent(pk),
-        'line=' + encodeURIComponent(lineUserId),
-        'ua=' + encodeURIComponent(navigator.userAgent.slice(0, 200)),
-        'ref=' + encodeURIComponent(document.referrer.slice(0, 200)),
-        'dur=' + (duration || ''),
-        'sid=' + encodeURIComponent(sid)
-      ].join('&');
+      // 用 URLSearchParams 統一參數編碼(瀏覽器原生 API,絕對正確)
+      const params = new URLSearchParams();
+      params.append('action', 'pageview');
+      params.append('code', code);
+      params.append('file', filename);
+      params.append('pk', pk);
+      params.append('line', lineUserId);
+      params.append('dur', duration || '');
+      params.append('sid', sid);
 
-      const url = APPS_SCRIPT_URL + '?' + qs;
-
-      // ★★★ 用 <img> 像素追蹤(Image beacon)送出 ★★★
-      // 理由:這是最簡單、最可靠的跨域 GET 方式,Google Analytics / Facebook Pixel
-      // 等所有分析服務 30 年來都用這個技術。
-      // - 絕對是 GET 方法,不會 400
-      // - 沒有 CORS 限制(image src 是天生允許跨域的)
-      // - 沒有 preflight、沒有 sendBeacon 強制 POST 問題
-      // - 不會被 ad-blocker 阻擋(因為是合法的 image 載入)
-      // - 不需要 fetch、不需要 XHR、不需要任何現代 API
-      const img = new Image();
-      img.src = url;
-      // 即使 Apps Script 回的是 JSON(不是真的圖片),img.onerror 也會觸發,
-      // 但「請求已送達」這個事實不變 — 這就是我們要的。
-      img.onload = img.onerror = function () { img.src = ''; };
+      // ★★★ 用 sendBeacon POST 送(對應 Apps Script doPost)★★★
+      // 理由:
+      // - sendBeacon 是專為「離開頁面時送資料」設計的瀏覽器原生 API
+      // - 即使頁面關閉、tab 切換、瀏覽器關閉,資料都會送出
+      // - 沒有 CORS 問題(因為是 fire-and-forget,瀏覽器不檢查 response)
+      // - 比 Image 像素追蹤更可靠(尤其在離開頁面時)
+      // - Apps Script doPost 已加 action === 'pageview' 處理
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(APPS_SCRIPT_URL, params);
+      } else if (window.fetch) {
+        // Fallback:fetch POST(舊瀏覽器)
+        fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          body: params,
+          mode: 'no-cors',
+          credentials: 'omit',
+          keepalive: true
+        }).catch(function () {});
+      }
     } catch (e) {
       // 完全靜默,不影響閱讀
     }
