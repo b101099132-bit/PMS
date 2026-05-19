@@ -1,0 +1,152 @@
+/**
+ * ============================================================
+ *  ⚠️⚠️⚠️  部 署 前 必 改  ⚠️⚠️⚠️
+ *
+ *  在下方第 34 行,把 APPS_SCRIPT_URL 內的
+ *      PLACEHOLDER_DEPLOYMENT_ID
+ *  替換成你的實際 Web App URL。
+ *
+ *  取得方式:
+ *  1. 開啟 Google Sheet > 擴充功能 > Apps Script
+ *  2. 右上角「部署」> 管理部署 > 編輯既有部署 > 新版本
+ *  3. 複製產生的 URL(格式如 https://script.google.com/macros/s/AKfycbx.../exec)
+ *  4. 整個 URL 取代第 34 行
+ *
+ *  若未替換,此腳本會在 console 顯示警告並完全靜默(不送出資料)。
+ * ============================================================
+ *
+ *  心臟加速康復團隊 — 衛教頁面瀏覽追蹤
+ *  edu/pageview.js
+ * ============================================================
+ *
+ *  功能:
+ *  - 頁面載入時記錄一次「瀏覽」(無停留秒數)
+ *  - 離開頁面時記錄一次「離開」(含停留秒數)
+ *  - 從 URL 抓取 ?pk=...&line=... 識別病人身分
+ *  - 從檔名自動解析單張代號(例:3-1-cabg-comparison.html → "3-1")
+ *  - Session ID 串連同一次連續瀏覽的多個單張
+ *  - 失敗完全靜默,不影響閱讀
+ *
+ *  部署:
+ *  1. 把此檔放在 /edu/pageview.js
+ *  2. 修改下方 APPS_SCRIPT_URL 為你的實際 Web App URL
+ *  3. 每份 /edu/*.html 末尾(</body> 前)加:
+ *       <script src="pageview.js" defer></script>
+ *
+ *  隱私:
+ *  - 不記錄病人姓名、身分證、病歷號
+ *  - 只記錄內部 pk + LINE userId(若同意推播即已同意)
+ *  - UA / Referrer 為標準 Web 統計欄位
+ * ============================================================
+ */
+
+(function () {
+  'use strict';
+
+  // ============================================================
+  //  ⚠️  部署設定 — 改為你的 Apps Script Web App URL
+  // ============================================================
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/PLACEHOLDER_DEPLOYMENT_ID/exec';
+
+  // 若 URL 還是 PLACEHOLDER 就不送(避免部署前的測試誤觸發)
+  if (APPS_SCRIPT_URL.indexOf('PLACEHOLDER') >= 0) {
+    console.warn('[pageview] APPS_SCRIPT_URL 尚未設定,瀏覽紀錄不會被送出');
+    return;
+  }
+
+  // ============================================================
+  //  資料解析
+  // ============================================================
+
+  // 從 URL 參數抓 pk 與 line(從 LINE / Email 點進來時會帶)
+  const params = new URLSearchParams(window.location.search);
+  const pk = params.get('pk') || '';
+  const lineUserId = params.get('line') || '';
+
+  // 從檔名解析單張代號(例:"3-1-cabg-comparison.html" → "3-1")
+  const filename = window.location.pathname.split('/').pop() || '';
+  const code = parseCode(filename);
+
+  function parseCode(fname) {
+    if (!fname || fname === 'index.html' || fname === '') return 'index';
+    // 抓開頭的「X-Y」或「X-Ya」「X-Yb」這類數字+字母的代號
+    const m = fname.match(/^(\d+-\d+[a-z]?)/);
+    return m ? m[1] : fname.replace(/\.html$/, '');
+  }
+
+  // Session ID(同一個 tab 連續瀏覽多份單張串連)
+  let sid;
+  try {
+    sid = sessionStorage.getItem('eduSid');
+    if (!sid) {
+      sid = 'sess_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      sessionStorage.setItem('eduSid', sid);
+    }
+  } catch (e) {
+    // 若 sessionStorage 不可用(極少數,如極端隱私模式)
+    sid = 'sess_nostorage_' + Math.random().toString(36).slice(2, 8);
+  }
+
+  const startTime = Date.now();
+
+  // ============================================================
+  //  送出紀錄
+  // ============================================================
+  function sendPageView(duration) {
+    try {
+      const qs = [
+        'action=pageview',
+        'code=' + encodeURIComponent(code),
+        'file=' + encodeURIComponent(filename),
+        'pk=' + encodeURIComponent(pk),
+        'line=' + encodeURIComponent(lineUserId),
+        'ua=' + encodeURIComponent(navigator.userAgent.slice(0, 200)),
+        'ref=' + encodeURIComponent(document.referrer.slice(0, 200)),
+        'dur=' + (duration || ''),
+        'sid=' + encodeURIComponent(sid)
+      ].join('&');
+
+      const url = APPS_SCRIPT_URL + '?' + qs;
+
+      // 離開頁面用 sendBeacon(可靠),否則用 fetch(no-cors)
+      if (duration && navigator.sendBeacon) {
+        navigator.sendBeacon(url);
+      } else if (window.fetch) {
+        fetch(url, { mode: 'no-cors', credentials: 'omit' }).catch(function () {});
+      } else {
+        // 古老瀏覽器 fallback
+        new Image().src = url;
+      }
+    } catch (e) {
+      // 完全靜默,不影響閱讀
+    }
+  }
+
+  // ============================================================
+  //  事件綁定
+  // ============================================================
+
+  // 進頁面立即記錄一次(無 duration)
+  if (document.readyState === 'complete') {
+    sendPageView();
+  } else {
+    window.addEventListener('load', function () { sendPageView(); });
+  }
+
+  // 離開頁面時記錄停留時間
+  // 用 visibilitychange + beforeunload 兩個事件(行動裝置 beforeunload 不可靠)
+  let leaveSent = false;
+  function onLeave() {
+    if (leaveSent) return;
+    leaveSent = true;
+    const duration = Math.round((Date.now() - startTime) / 1000);
+    sendPageView(duration);
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') onLeave();
+  });
+  window.addEventListener('pagehide', onLeave);
+  window.addEventListener('beforeunload', onLeave);
+
+})();
