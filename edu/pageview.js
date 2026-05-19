@@ -46,7 +46,7 @@
   // ============================================================
   //  ⚠️  部署設定 — 改為你的 Apps Script Web App URL
   // ============================================================
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/PLACEHOLDER_DEPLOYMENT_ID/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzr5eDnHyyq2hWZJ1pD4x5z7h8LkabeZMNDcl6o1lWx0e3bE4CLDCkmqYCzPA1qagU2ug/exec';
 
   // 若 URL 還是 PLACEHOLDER 就不送(避免部署前的測試誤觸發)
   if (APPS_SCRIPT_URL.indexOf('PLACEHOLDER') >= 0) {
