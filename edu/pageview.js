@@ -102,13 +102,15 @@
 
       const url = APPS_SCRIPT_URL + '?' + qs;
 
-      // 離開頁面用 sendBeacon(可靠),否則用 fetch(no-cors)
-      if (duration && navigator.sendBeacon) {
-        navigator.sendBeacon(url);
-      } else if (window.fetch) {
-        fetch(url, { mode: 'no-cors', credentials: 'omit' }).catch(function () {});
+      // 全程使用 GET(對應 Apps Script doGet),避免 sendBeacon 強制 POST 造成 400
+      // - 進頁面:標準 fetch GET no-cors
+      // - 離開頁面:fetch GET no-cors + keepalive(讓請求在 tab 關閉後仍能送完)
+      if (window.fetch) {
+        const opts = { method: 'GET', mode: 'no-cors', credentials: 'omit' };
+        if (duration) opts.keepalive = true;  // 離開頁面時保留請求直到送出
+        fetch(url, opts).catch(function () {});
       } else {
-        // 古老瀏覽器 fallback
+        // 古老瀏覽器 fallback(IE / 舊版 Android)
         new Image().src = url;
       }
     } catch (e) {
