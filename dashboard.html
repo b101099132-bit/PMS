@@ -800,6 +800,187 @@ footer {
   font-size: 12px;
   color: var(--ink-faint);
 }
+/* ========== Section 08: 衛教瀏覽量統計 ========== */
+.edu-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+@media (max-width: 700px) {
+  .edu-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.edu-stat-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 14px 16px;
+  text-align: center;
+}
+.edu-stat-card .es-label {
+  font-size: 12px;
+  color: var(--ink-faint);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+.edu-stat-card .es-value {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+}
+.edu-stat-card .es-unit {
+  font-size: 13px;
+  color: var(--ink-faint);
+  font-weight: 400;
+  margin-left: 3px;
+}
+.edu-stat-card[data-accent="teal"] .es-value { color: #1F5A5A; }
+.edu-stat-card[data-accent="gold"] .es-value { color: #B8954F; }
+.edu-stat-card[data-accent="plum"] .es-value { color: #7A4A6A; }
+.edu-stat-card[data-accent="navy"] .es-value { color: #2C4F7C; }
+
+.edu-rank-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+.edu-rank-card .erc-title {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1F5A5A;
+  margin-bottom: 10px;
+}
+.edu-rank-card .erc-sub {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-bottom: 12px;
+}
+.edu-rank-row {
+  display: grid;
+  grid-template-columns: 40px 60px 1fr auto auto auto;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--border);
+  align-items: center;
+  font-size: 13px;
+}
+.edu-rank-row:last-child { border-bottom: none; }
+.edu-rank-row .er-rank {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700;
+  color: var(--ink-faint);
+  font-size: 13px;
+}
+.edu-rank-row .er-rank.top { color: #B8954F; font-size: 14px; }
+.edu-rank-row .er-code {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 600;
+  color: #1F5A5A;
+  font-size: 13px;
+}
+.edu-rank-row .er-name {
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.edu-rank-row .er-views {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 700;
+  color: var(--ink);
+}
+.edu-rank-row .er-unique {
+  color: var(--ink-faint);
+  font-size: 12px;
+}
+.edu-rank-row .er-dur {
+  color: var(--ink-faint);
+  font-size: 12px;
+}
+@media (max-width: 700px) {
+  .edu-rank-row {
+    grid-template-columns: 30px 50px 1fr auto;
+    font-size: 12px;
+  }
+  .edu-rank-row .er-unique,
+  .edu-rank-row .er-dur { display: none; }
+}
+
+.edu-trend-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+.edu-trend-card .etc-title {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #1F5A5A;
+  margin-bottom: 12px;
+}
+.edu-trend-bars {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  align-items: end;
+  height: 100px;
+  margin-bottom: 8px;
+}
+.edu-trend-bar {
+  background: linear-gradient(to top, #1F5A5A, #5A8B8B);
+  border-radius: 2px 2px 0 0;
+  min-height: 2px;
+  position: relative;
+}
+.edu-trend-bar[data-zero="1"] {
+  background: #E0E0E0;
+  opacity: 0.5;
+}
+.edu-trend-bar .etb-label {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.edu-trend-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  font-size: 10px;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+.edu-empty-card {
+  background: var(--paper);
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  padding: 30px 20px;
+  text-align: center;
+}
+.edu-empty-card .eec-title {
+  font-family: 'Noto Serif TC', serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.edu-empty-card .eec-desc {
+  font-size: 13px;
+  color: var(--ink-faint);
+  line-height: 1.7;
+}
+
 </style>
 </head>
 <body>
@@ -893,9 +1074,41 @@ async function load() {
       return;
     }
     render(res);
+
+    // 衛教瀏覽量 — 副載入(主 dashboard 載入完成後再請求,不阻塞主視圖)
+    loadEduStats(key).catch(err => {
+      console.warn('衛教瀏覽量載入失敗:', err);
+      // 副載入失敗不顯示錯誤橫幅,只在 console 警告
+    });
   } catch (err) {
-    showError('載入失敗：' + err.message);
+    showError('載入失敗:' + err.message);
     $('content').innerHTML = '';
+  }
+}
+
+// ===== 副載入:衛教瀏覽量 =====
+async function loadEduStats(key) {
+  // 在 content 末尾加上 loading 區塊
+  const loadingId = '_edu_loading_' + Date.now();
+  $('content').insertAdjacentHTML('beforeend',
+    `<div id="${loadingId}" class="loading-block" style="margin-top:20px"><span class="loading"></span> 載入衛教瀏覽量…</div>`
+  );
+
+  try {
+    const res = await jsonp(APPS_SCRIPT_URL, { action: 'eduStats', key });
+    document.getElementById(loadingId)?.remove();
+
+    if (res.error === 'unauthorized') return;
+    if (res.error) {
+      $('content').insertAdjacentHTML('beforeend',
+        `<div class="edu-empty-card"><div class="eec-title">衛教瀏覽量載入失敗</div><div class="eec-desc">${escapeHtml(res.error)}</div></div>`
+      );
+      return;
+    }
+    $('content').insertAdjacentHTML('beforeend', renderEduStats(res));
+  } catch (err) {
+    document.getElementById(loadingId)?.remove();
+    console.warn('eduStats 請求失敗:', err);
   }
 }
 
@@ -1609,6 +1822,113 @@ function statusPill(p) {
   }
   if (p.status === '排定中') return '<span class="status-pill scheduled">排定中</span>';
   return '<span class="status-pill cancelled">—</span>';
+}
+
+// ===== Edu pageview stats renderer =====
+function renderEduStats(res) {
+  // Empty 狀態
+  if (res.empty) {
+    return `
+      <h2 class="section-title">
+        <span class="num">08</span>
+        <span>衛教瀏覽量統計</span>
+      </h2>
+      <div class="edu-empty-card">
+        <div class="eec-title">尚無瀏覽紀錄</div>
+        <div class="eec-desc">當病人或家屬首次點開衛教單張後,此區會顯示累計統計。<br>(系統會自動建立「瀏覽紀錄」工作表記錄每一筆瀏覽)</div>
+      </div>
+    `;
+  }
+
+  const t = res.totals;
+
+  // 統計卡片
+  const statCards = `
+    <div class="edu-stats-grid">
+      <div class="edu-stat-card" data-accent="teal">
+        <div class="es-label">總瀏覽量</div>
+        <div class="es-value">${t.totalViews}<span class="es-unit">次</span></div>
+      </div>
+      <div class="edu-stat-card" data-accent="gold">
+        <div class="es-label">不重複病人</div>
+        <div class="es-value">${t.uniquePatients}<span class="es-unit">位</span></div>
+      </div>
+      <div class="edu-stat-card" data-accent="plum">
+        <div class="es-label">訪客瀏覽量</div>
+        <div class="es-value">${t.guestViews}<span class="es-unit">次</span></div>
+      </div>
+      <div class="edu-stat-card" data-accent="navy">
+        <div class="es-label">已有瀏覽的單張</div>
+        <div class="es-value">${t.totalArticles}<span class="es-unit">份</span></div>
+      </div>
+    </div>
+  `;
+
+  // 排行(全部 byArticle,依瀏覽量排序)
+  const rankRows = res.byArticle.map((a, i) => {
+    const rank = i + 1;
+    const rankClass = rank <= 3 ? 'top' : '';
+    const durStr = a.avgDuration != null ? `${a.avgDuration} 秒` : '—';
+    return `
+      <div class="edu-rank-row">
+        <span class="er-rank ${rankClass}">${rank}</span>
+        <span class="er-code">${escapeHtml(a.code)}</span>
+        <span class="er-name">${escapeHtml(a.name)}</span>
+        <span class="er-views">${a.views}</span>
+        <span class="er-unique">${a.uniquePatients} 位</span>
+        <span class="er-dur">${durStr}</span>
+      </div>
+    `;
+  }).join('');
+
+  const rankCard = `
+    <div class="edu-rank-card">
+      <div class="erc-title">各單張瀏覽量排行</div>
+      <div class="erc-sub">依累計瀏覽量排序 · 共 ${res.byArticle.length} 份單張被瀏覽過</div>
+      <div class="edu-rank-row" style="border-bottom:1px solid var(--border);padding-bottom:6px;font-size:11px;color:var(--ink-faint);font-weight:600;">
+        <span class="er-rank">#</span>
+        <span class="er-code">代號</span>
+        <span class="er-name">單張名稱</span>
+        <span class="er-views">瀏覽</span>
+        <span class="er-unique">不重複</span>
+        <span class="er-dur">平均停留</span>
+      </div>
+      ${rankRows}
+    </div>
+  `;
+
+  // 最近 7 日趨勢(bar chart)
+  const maxDayViews = Math.max(...res.recent7Days.map(d => d.views), 1);
+  const trendBars = res.recent7Days.map(d => {
+    const pct = (d.views / maxDayViews) * 100;
+    const zeroAttr = d.views === 0 ? 'data-zero="1"' : '';
+    return `<div class="edu-trend-bar" ${zeroAttr} style="height:${pct}%">${d.views > 0 ? `<span class="etb-label">${d.views}</span>` : ''}</div>`;
+  }).join('');
+
+  const trendDates = res.recent7Days.map(d => {
+    // 只顯示 MM/DD
+    const md = d.date.slice(5).replace('-', '/');
+    return `<span>${md}</span>`;
+  }).join('');
+
+  const trendCard = `
+    <div class="edu-trend-card">
+      <div class="etc-title">最近 7 日瀏覽趨勢</div>
+      <div class="edu-trend-bars">${trendBars}</div>
+      <div class="edu-trend-dates">${trendDates}</div>
+    </div>
+  `;
+
+  return `
+    <h2 class="section-title">
+      <span class="num">08</span>
+      <span>衛教瀏覽量統計</span>
+      <span class="sub">${t.totalViews} 次累計瀏覽 · ${t.uniquePatients} 位病人</span>
+    </h2>
+    ${statCards}
+    ${trendCard}
+    ${rankCard}
+  `;
 }
 
 // ===== Init =====
